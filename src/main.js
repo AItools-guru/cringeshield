@@ -29,6 +29,18 @@ const dom = {
   cringeScoreNum: document.getElementById('cringe-score-num'),
   cringeScoreVerdict: document.getElementById('cringe-score-verdict'),
   
+  // Progress Fills
+  fillBuzzwords: document.getElementById('fill-buzzwords'),
+  fillBroetry: document.getElementById('fill-broetry'),
+  fillEmoji: document.getElementById('fill-emoji'),
+  fillA11y: document.getElementById('fill-a11y'),
+  
+  // Value labels
+  valBuzzwords: document.getElementById('val-buzzwords'),
+  valBroetry: document.getElementById('val-broetry'),
+  valEmoji: document.getElementById('val-emoji'),
+  valA11y: document.getElementById('val-a11y'),
+  
   critiqueIconBuzzwords: document.getElementById('critique-icon-buzzwords'),
   critiqueDescBuzzwords: document.getElementById('critique-desc-buzzwords'),
   critiqueBuzzwordsHighlight: document.getElementById('critique-buzzwords-highlight'),
@@ -49,7 +61,24 @@ const dom = {
   inputApiKey: document.getElementById('input-api-key'),
   inputProfileName: document.getElementById('input-profile-name'),
   inputProfileHeadline: document.getElementById('input-profile-headline'),
-  inputProfileAvatar: document.getElementById('input-profile-avatar')
+  inputProfileAvatar: document.getElementById('input-profile-avatar'),
+  inputProfileVerified: document.getElementById('input-profile-verified'),
+  previewVerifiedBadge: document.getElementById('preview-verified-badge'),
+  
+  // Document Stats elements
+  statWords: document.getElementById('stat-words'),
+  statChars: document.getElementById('stat-chars'),
+  statReadtime: document.getElementById('stat-readtime'),
+  
+  // Quick format toolbar buttons
+  btnToolSpace: document.getElementById('btn-tool-space'),
+  btnToolLists: document.getElementById('btn-tool-lists'),
+  btnToolDebuzz: document.getElementById('btn-tool-debuzz'),
+  btnToolClear: document.getElementById('btn-tool-clear'),
+  
+  // Interactive preview buttons
+  btnPreviewLike: document.getElementById('btn-preview-like'),
+  previewLikesCount: document.getElementById('preview-likes-count')
 };
 
 // Preset Templates Library
@@ -82,7 +111,7 @@ It will completely revolutionize the way product manager write user stories and 
 Check out the link below to get started and unlock your team's true potential! 👇`
 };
 
-// Simulated Pre-baked Refactoring Outputs
+// Simulated Refactored Mapped Output Library
 const SIMULATED_OUTPUTS = {
   meeting: {
     'hook-value-cta': {
@@ -297,7 +326,7 @@ Check the editor: cringeshield.ai/specs
   }
 };
 
-// AI Buzzwords Dictionary
+// Corporate AI Buzzwords Dictionary
 const BUZZWORDS = [
   'delve', 'testament', 'revolutionize', 'groundbreaking', 'synergy', 'synergies',
   'game-changer', 'game changer', 'unlock', 'tapestry', 'seamless', 'seamlessly',
@@ -314,25 +343,37 @@ const state = {
   profileName: localStorage.getItem('cs_profile_name') || 'Saurabh Shidhore',
   profileHeadline: localStorage.getItem('cs_profile_headline') || 'Product Leader & Builder | Building AI Tools',
   profileAvatar: localStorage.getItem('cs_profile_avatar') || '',
+  profileVerified: localStorage.getItem('cs_profile_verified') !== 'false',
   formattedPost: '',
-  cringeScore: 0
+  cringeScore: 0,
+  isLiked: false,
+  likesCount: 124
 };
 
 // Initialize Config
 function initConfig() {
   if (state.apiKey) dom.inputApiKey.value = state.apiKey;
+  
   if (state.profileName) {
     dom.inputProfileName.value = state.profileName;
     dom.previewName.textContent = state.profileName;
   }
+  
   if (state.profileHeadline) {
     dom.inputProfileHeadline.value = state.profileHeadline;
     dom.previewHeadline.textContent = state.profileHeadline;
   }
+  
   if (state.profileAvatar) {
     dom.inputProfileAvatar.value = state.profileAvatar;
     updateAvatar(state.profileAvatar);
   }
+  
+  dom.inputProfileVerified.checked = state.profileVerified;
+  toggleVerifiedBadge(state.profileVerified);
+  
+  // Set initial default preview likes
+  dom.previewLikesCount.textContent = state.likesCount;
 }
 
 function updateAvatar(url) {
@@ -340,6 +381,14 @@ function updateAvatar(url) {
     dom.previewAvatar.innerHTML = `<img src="${url}" alt="Avatar">`;
   } else {
     dom.previewAvatar.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>`;
+  }
+}
+
+function toggleVerifiedBadge(visible) {
+  if (visible) {
+    dom.previewVerifiedBadge.classList.add('visible');
+  } else {
+    dom.previewVerifiedBadge.classList.remove('visible');
   }
 }
 
@@ -367,11 +416,32 @@ function switchTab(tabId) {
   }
 }
 
+// Stats & Telemetry Calculator
+function calculateStats(text) {
+  const charCount = text.length;
+  const words = text.trim().split(/\s+/).filter(w => w.length > 0);
+  const wordCount = words.length;
+  
+  // Assume average reading speed of 200 WPM
+  const readTimeSeconds = Math.ceil((wordCount / 200) * 60);
+  
+  dom.statWords.textContent = wordCount;
+  dom.statChars.textContent = charCount;
+  dom.statReadtime.textContent = charCount > 0 ? readTimeSeconds : 0;
+  
+  if (charCount > 3000) {
+    dom.statChars.style.color = 'var(--color-cyber-pink)';
+  } else {
+    dom.statChars.style.color = 'var(--color-cyber-cyan)';
+  }
+}
+
 // Cringe Analyzer Logic
 function analyzeCringe(text) {
   if (!text || text.trim() === '') {
     updateGauge(0);
     resetDiagnostics();
+    updateTelemetryBars(0, 0, 0, 0);
     return 0;
   }
 
@@ -379,7 +449,7 @@ function analyzeCringe(text) {
   const words = cleanText.split(/\s+/).filter(w => w.length > 0);
   const totalWordsCount = words.length;
 
-  let score = 0;
+  let totalScore = 0;
 
   // 1. Buzzword Scan
   const detectedBuzzwords = [];
@@ -392,7 +462,9 @@ function analyzeCringe(text) {
   });
 
   const uniqueBuzzwordsCount = detectedBuzzwords.length;
-  score += Math.min(uniqueBuzzwordsCount * 10, 50);
+  // Calculate category value
+  const buzzwordPercent = Math.min((uniqueBuzzwordsCount / 5) * 100, 100);
+  totalScore += Math.min(uniqueBuzzwordsCount * 10, 50);
 
   // 2. Spacing / Broetry Evaluator
   const paragraphs = cleanText.split(/\n+/).filter(p => p.trim().length > 0);
@@ -400,9 +472,14 @@ function analyzeCringe(text) {
   const avgWordsPerPara = paragraphCount > 0 ? totalWordsCount / paragraphCount : 0;
   
   let isBroetry = false;
+  let broetryPercent = 0;
   if (paragraphCount >= 4 && avgWordsPerPara < 10) {
     isBroetry = true;
-    score += 20;
+    totalScore += 20;
+    broetryPercent = 100;
+  } else if (paragraphCount >= 3 && avgWordsPerPara < 13) {
+    broetryPercent = 60;
+    totalScore += 10;
   }
 
   // 3. Emoji density check
@@ -412,26 +489,30 @@ function analyzeCringe(text) {
   const emojiRatio = totalWordsCount > 0 ? (emojiCount / totalWordsCount) * 100 : 0;
 
   let emojiCringe = false;
+  let emojiPercent = Math.min((emojiCount / 6) * 100, 100);
   if (emojiCount > 6 || emojiRatio > 6) {
     emojiCringe = true;
-    score += 15;
+    totalScore += 15;
   }
 
-  // 4. Unicode Formatting check (Accessibility warning)
+  // 4. Unicode Formatting check (Accessibility warning) & Hashtags
   const unicodeFontRegex = /[\u{1D400}-\u{1D7FF}]/u;
   const hasUnicodeFonts = unicodeFontRegex.test(cleanText);
-  if (hasUnicodeFonts) {
-    score += 15;
-  }
-
-  // 5. Hashtag checks
+  
   const hashtags = cleanText.match(/#[a-zA-Z0-9_]+/g) || [];
   const hashtagCount = hashtags.length;
   
   let hashtagIssues = false;
+  let a11yPercent = 0;
+  
+  if (hasUnicodeFonts) {
+    totalScore += 15;
+    a11yPercent += 50;
+  }
   if (hashtagCount > 5) {
+    totalScore += 10;
+    a11yPercent += 30;
     hashtagIssues = true;
-    score += 10;
   }
   
   const lines = cleanText.split('\n');
@@ -445,13 +526,16 @@ function analyzeCringe(text) {
     }
   }
   if (hashtagsInMiddle) {
+    totalScore += 10;
+    a11yPercent += 20;
     hashtagIssues = true;
-    score += 10;
   }
 
-  const finalScore = Math.min(score, 100);
+  const finalScore = Math.min(totalScore, 100);
   
+  // Update UI Elements
   updateGauge(finalScore);
+  updateTelemetryBars(buzzwordPercent, broetryPercent, emojiPercent, a11yPercent);
   
   updateDiagnosticsUI({
     detectedBuzzwords,
@@ -476,26 +560,42 @@ function updateGauge(score) {
   const offset = 440 - (440 * score) / 100;
   dom.cringeGaugeCircle.style.strokeDashoffset = offset;
   
-  let color = 'var(--color-success)';
+  let color = 'var(--color-cyber-green)';
   let verdict = 'Clean';
   
   if (score > 60) {
-    color = 'var(--color-danger)';
+    color = 'var(--color-cyber-pink)';
     verdict = 'Critical Cringe';
-    dom.cringeGaugeCircle.style.stroke = 'var(--color-danger)';
+    dom.cringeGaugeCircle.style.stroke = 'var(--color-cyber-pink)';
   } else if (score > 30) {
-    color = 'var(--color-warning)';
+    color = 'var(--color-cyber-orange)';
     verdict = 'Mildly Cringey';
-    dom.cringeGaugeCircle.style.stroke = 'var(--color-warning)';
+    dom.cringeGaugeCircle.style.stroke = 'var(--color-cyber-orange)';
   } else {
-    dom.cringeGaugeCircle.style.stroke = 'var(--color-success)';
+    dom.cringeGaugeCircle.style.stroke = 'var(--color-cyber-green)';
   }
   
   dom.cringeScoreVerdict.textContent = verdict;
   dom.cringeScoreVerdict.style.color = color;
 }
 
+// Update Telemetry Progress bar widths
+function updateTelemetryBars(buzz, bro, emoji, a11y) {
+  dom.fillBuzzwords.style.width = `${buzz}%`;
+  dom.valBuzzwords.textContent = `${Math.round(buzz)}%`;
+  
+  dom.fillBroetry.style.width = `${bro}%`;
+  dom.valBroetry.textContent = `${Math.round(bro)}%`;
+  
+  dom.fillEmoji.style.width = `${emoji}%`;
+  dom.valEmoji.textContent = `${Math.round(emoji)}%`;
+  
+  dom.fillA11y.style.width = `${a11y}%`;
+  dom.valA11y.textContent = `${Math.round(a11y)}%`;
+}
+
 function updateDiagnosticsUI(data) {
+  // 1. Buzzwords Card
   if (data.detectedBuzzwords.length > 0) {
     dom.critiqueIconBuzzwords.textContent = '×';
     dom.critiqueIconBuzzwords.className = 'critique-icon fail';
@@ -510,6 +610,7 @@ function updateDiagnosticsUI(data) {
     dom.critiqueBuzzwordsHighlight.innerHTML = '';
   }
 
+  // 2. Broetry Card
   if (data.isBroetry) {
     dom.critiqueIconBroetry.textContent = '⚠️';
     dom.critiqueIconBroetry.className = 'critique-icon warn';
@@ -520,6 +621,7 @@ function updateDiagnosticsUI(data) {
     dom.critiqueDescBroetry.textContent = 'Readable formatting. Spacing splits paragraphs at standard intervals.';
   }
 
+  // 3. Emojis and formatting Card
   if (data.hasUnicodeFonts || data.emojiCringe || data.hashtagIssues) {
     dom.critiqueIconFormatting.textContent = '⚠️';
     dom.critiqueIconFormatting.className = 'critique-icon warn';
@@ -561,75 +663,65 @@ function resetDiagnostics() {
   dom.critiqueDescFormatting.textContent = 'Normal emoji density and clean spacing tags. No accessibility issues.';
 }
 
-// Local Fallback Rule-based Refactoring (Offline Sandbox)
+// Local Fallback Refactor Utilities
+function runLocalDeBuzz(text) {
+  let cleaned = text;
+  BUZZWORDS.forEach(buzz => {
+    const replacements = {
+      'delve': 'go', 'testament': 'proof', 'revolutionize': 'improve', 'revolutionized': 'improved',
+      'groundbreaking': 'new', 'synergy': 'teamwork', 'synergies': 'teamwork', 'game-changer': 'useful tool',
+      'game changer': 'useful tool', 'unlock': 'start', 'tapestry': 'mix', 'seamless': 'simple',
+      'seamlessly': 'easily', 'paradigm': 'model', 'leverage': 'use', 'elevate': 'help',
+      'dynamic': 'active', 'robust': 'strong', 'optimize': 'tune', 'empower': 'help',
+      'utilize': 'use', 'vibrant': 'bright', 'foster': 'build'
+    };
+    const rep = replacements[buzz.toLowerCase()];
+    if (rep) {
+      const regex = new RegExp(`\\b${buzz}\\b`, 'gi');
+      cleaned = cleaned.replace(regex, rep);
+    }
+  });
+  return cleaned;
+}
+
+function runLocalAutoSpace(text) {
+  // First, strip all consecutive spaces/lines into single line breaks
+  const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+  // Re-join with double newlines
+  return lines.join('\n\n');
+}
+
+function runLocalCleanLists(text) {
+  // Convert starting hyphens/dashes to standard bullets
+  let cleaned = text.replace(/^\s*[-•]\s+/gm, '* ');
+  // Convert compound hyphens to double spaces
+  cleaned = cleaned.replace(/(\w+)-(\w+)/g, '$1 $2');
+  return cleaned;
+}
+
+// Offline fallback generator
 function fallbackLocalRefactor(text, formula, tone, constraints) {
   let cleaned = text;
-
-  // 1. Clean spacing: enforce double line breaks for readability
+  
   if (constraints.spacing) {
-    cleaned = cleaned.replace(/\n\s*\n/g, '\n\n');
+    cleaned = runLocalAutoSpace(cleaned);
   }
-
-  // 2. Strip AI buzzwords using dictionary replacement
   if (constraints.buzzwords) {
-    BUZZWORDS.forEach(buzz => {
-      // Find and replace buzzwords with simpler alternatives
-      const replacements = {
-        'delve': 'go',
-        'testament': 'proof',
-        'revolutionize': 'improve',
-        'revolutionized': 'improved',
-        'groundbreaking': 'new',
-        'synergy': 'teamwork',
-        'synergies': 'teamwork',
-        'game-changer': 'useful tool',
-        'game changer': 'useful tool',
-        'unlock': 'start',
-        'tapestry': 'mix',
-        'seamless': 'simple',
-        'seamlessly': 'easily',
-        'paradigm': 'model',
-        'leverage': 'use',
-        'elevate': 'help',
-        'dynamic': 'active',
-        'robust': 'strong',
-        'optimize': 'tune',
-        'empower': 'help',
-        'utilize': 'use',
-        'vibrant': 'bright'
-      };
-      
-      const rep = replacements[buzz.toLowerCase()] || '';
-      if (rep) {
-        const regex = new RegExp(`\\b${buzz}\\b`, 'gi');
-        cleaned = cleaned.replace(regex, rep);
-      }
-    });
+    cleaned = runLocalDeBuzz(cleaned);
   }
-
-  // 3. Strip hyphens/asterisks in bullet lists and replace with standard bullet emoji/points
   if (constraints.hyphens) {
-    // Replace markdown lists starting with hyphens with clean emoji bullet points
-    cleaned = cleaned.replace(/^\s*-\s+/gm, '* ');
-    // Strip hyphens from compound words
-    cleaned = cleaned.replace(/(\w+)-(\w+)/g, '$1 $2');
+    cleaned = runLocalCleanLists(cleaned);
   }
-
-  // 4. Enforce hashtag constraints (limit to 3 bottom hashtags)
   if (constraints.hashtags) {
-    // Strip all existing scattered hashtags
     const hashtags = cleaned.match(/#[a-zA-Z0-9_]+/g) || [];
     cleaned = cleaned.replace(/#[a-zA-Z0-9_]+/g, '');
-    
-    // Add exactly 3 bottom tags
     const defaultTags = ['#building', '#product', '#engineering'];
     const chosenTags = hashtags.slice(0, 3).length >= 2 ? hashtags.slice(0, 3) : defaultTags;
     cleaned = cleaned.trim() + '\n\n' + chosenTags.join(' ');
   }
 
-  // Restructure post layout based on formula and tone
-  let header = '';
-  let footer = '';
+  let header = "Here is our product check outline:";
+  let footer = "Let's build.";
 
   if (formula === 'pas') {
     header = "The primary bottleneck in most development cycles is alignment.";
@@ -640,12 +732,8 @@ function fallbackLocalRefactor(text, formula, tone, constraints) {
   } else if (formula === 'contrarian') {
     header = "Aligning your team is actually wasting their time.";
     footer = "Give developers requirements instead of meetings.";
-  } else {
-    header = "Here is our sprint check overview:";
-    footer = "Let's build.";
   }
 
-  // Clean double spaces and combine
   const lines = cleaned.split('\n').filter(l => l.trim().length > 0);
   const formattedLines = [
     header,
@@ -656,10 +744,9 @@ function fallbackLocalRefactor(text, formula, tone, constraints) {
   return formattedLines.join('\n\n');
 }
 
-// Simulator Refactor Check
+// Preset matching fallback
 function runSimulatorRefactor(text, formula, tone) {
-  // Check if input is similar to one of our preset templates
-  let detectedPreset = 'meeting'; // default fallback
+  let detectedPreset = 'meeting';
   
   if (text.includes('notification') || text.includes('pub-sub')) {
     detectedPreset = 'spec';
@@ -671,10 +758,8 @@ function runSimulatorRefactor(text, formula, tone) {
     detectedPreset = 'meeting';
   }
 
-  // Retrieve simulator pre-baked mappings
   const presetResults = SIMULATED_OUTPUTS[detectedPreset];
   if (presetResults) {
-    // Use PAS if template specifies it, else check selected formula
     const selectedForm = presetResults[formula] ? formula : Object.keys(presetResults)[0];
     const toneResults = presetResults[selectedForm];
     if (toneResults) {
@@ -683,7 +768,6 @@ function runSimulatorRefactor(text, formula, tone) {
     }
   }
 
-  // If it's a completely custom input and we have no API key, run local rule de-cringer
   const constraints = {
     buzzwords: dom.checkBuzzwords.checked,
     hyphens: dom.checkHyphens.checked,
@@ -693,12 +777,11 @@ function runSimulatorRefactor(text, formula, tone) {
   return fallbackLocalRefactor(text, formula, tone, constraints);
 }
 
-// Gemini API Fetch Caller
+// Gemini API Caller
 async function callGeminiApi(text, formula, tone, constraints) {
   const apiKey = state.apiKey;
   const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
 
-  // Design Gemini System Prompts
   const systemPrompt = `You are a world-class LinkedIn Copywriting specialist and De-Cringer.
 Your mission is to take the user's raw, messy, or robotic draft post and refactor it into an engaging, human, high-impact LinkedIn post.
 
@@ -741,13 +824,11 @@ Format the output strictly as plain text containing only the de-cringed, formatt
   return rawOutput.trim();
 }
 
-// See more toggle calculation
 function calculateSeeMore() {
   const bodyEl = dom.previewPostBody;
   const text = bodyEl.textContent || '';
   const paragraphs = text.split('\n');
   
-  // LinkedIn collapses posts that are longer than ~140 characters or have multiple line breaks.
   if (text.length > 140 || paragraphs.length > 3) {
     bodyEl.classList.add('collapsed');
     dom.previewSeeMore.classList.remove('hidden');
@@ -758,7 +839,7 @@ function calculateSeeMore() {
   }
 }
 
-// Core refactoring trigger
+// Main Trigger Refactor
 async function refactorPost() {
   const inputText = dom.rawInput.value;
   if (!inputText || inputText.trim() === '') {
@@ -766,7 +847,6 @@ async function refactorPost() {
     return;
   }
 
-  // Open loader
   dom.loaderOverlay.classList.add('active');
   
   const formula = dom.selectFormula.value;
@@ -782,31 +862,26 @@ async function refactorPost() {
     let outputText = '';
     
     if (state.apiKey) {
-      // Direct API mode
       outputText = await callGeminiApi(inputText, formula, tone, constraints);
     } else {
-      // Simulator fallback Mode
       console.log('API Key not set. Running in Simulator Mode...');
-      // Simulated processing time for realism
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      await new Promise(resolve => setTimeout(resolve, 1200));
       outputText = runSimulatorRefactor(inputText, formula, tone);
     }
 
-    // Process output
     state.formattedPost = outputText;
     dom.previewPostBody.textContent = outputText;
     
-    // Switch to preview tab
+    // Switch to preview
     switchTab('preview');
     calculateSeeMore();
     
-    // Run diagnostics on output to show it's clean (should be 0% or low score!)
+    // Evaluate clean score
     analyzeCringe(outputText);
 
   } catch (error) {
     console.error('Error shielding post:', error);
-    alert(`Shielding failed: ${error.message}. Checking Simulator fallback...`);
-    // Automated fallback to Simulator
+    alert(`Shielding failed: ${error.message}. Running Simulator fallback...`);
     const outputText = runSimulatorRefactor(inputText, formula, tone);
     state.formattedPost = outputText;
     dom.previewPostBody.textContent = outputText;
@@ -818,7 +893,7 @@ async function refactorPost() {
   }
 }
 
-// Copy Post Handler
+// Copy Post
 function setupCopyHandler() {
   dom.btnCopyPost.addEventListener('click', () => {
     if (!state.formattedPost) {
@@ -830,25 +905,78 @@ function setupCopyHandler() {
       .then(() => {
         const originalText = dom.btnCopyPost.innerHTML;
         dom.btnCopyPost.innerHTML = '✓ Copied!';
-        dom.btnCopyPost.style.background = 'var(--color-success)';
-        dom.btnCopyPost.style.borderColor = 'var(--color-success)';
-        dom.btnCopyPost.style.color = '#fff';
+        dom.btnCopyPost.style.background = 'var(--color-cyber-green)';
+        dom.btnCopyPost.style.borderColor = 'var(--color-cyber-green)';
+        dom.btnCopyPost.style.color = '#050608';
         
         setTimeout(() => {
           dom.btnCopyPost.innerHTML = originalText;
           dom.btnCopyPost.style.background = 'var(--color-accent)';
           dom.btnCopyPost.style.borderColor = 'var(--color-accent)';
-          dom.btnCopyPost.style.color = '#000';
+          dom.btnCopyPost.style.color = '#040508';
         }, 2000);
       })
       .catch(err => {
-        console.error('Could not copy text: ', err);
-        alert('Failed to copy text.');
+        console.error('Copy failed: ', err);
+        alert('Failed to copy.');
       });
   });
 }
 
-// Event Setup
+// Quick Toolbar Setup
+function setupToolbarHandlers() {
+  // 1. Auto-Space
+  dom.btnToolSpace.addEventListener('click', () => {
+    const txt = dom.rawInput.value;
+    if (txt) {
+      dom.rawInput.value = runLocalAutoSpace(txt);
+      dom.rawInput.dispatchEvent(new Event('input'));
+    }
+  });
+
+  // 2. Clean Lists
+  dom.btnToolLists.addEventListener('click', () => {
+    const txt = dom.rawInput.value;
+    if (txt) {
+      dom.rawInput.value = runLocalCleanLists(txt);
+      dom.rawInput.dispatchEvent(new Event('input'));
+    }
+  });
+
+  // 3. De-Buzz
+  dom.btnToolDebuzz.addEventListener('click', () => {
+    const txt = dom.rawInput.value;
+    if (txt) {
+      dom.rawInput.value = runLocalDeBuzz(txt);
+      dom.rawInput.dispatchEvent(new Event('input'));
+    }
+  });
+
+  // 4. Clear
+  dom.btnToolClear.addEventListener('click', () => {
+    dom.rawInput.value = '';
+    dom.rawInput.dispatchEvent(new Event('input'));
+  });
+}
+
+// Like Engagement Button Setup
+function setupLikeHandler() {
+  dom.btnPreviewLike.addEventListener('click', () => {
+    state.isLiked = !state.isLiked;
+    
+    if (state.isLiked) {
+      state.likesCount += 1;
+      dom.btnPreviewLike.classList.add('active');
+    } else {
+      state.likesCount -= 1;
+      dom.btnPreviewLike.classList.remove('active');
+    }
+    
+    dom.previewLikesCount.textContent = state.likesCount;
+  });
+}
+
+// Event Bindings
 function setupEventListeners() {
   dom.btnOpenSettings.addEventListener('click', () => toggleDrawer(true));
   dom.btnCloseSettings.addEventListener('click', () => toggleDrawer(false));
@@ -859,15 +987,18 @@ function setupEventListeners() {
     state.profileName = dom.inputProfileName.value.trim();
     state.profileHeadline = dom.inputProfileHeadline.value.trim();
     state.profileAvatar = dom.inputProfileAvatar.value.trim();
+    state.profileVerified = dom.inputProfileVerified.checked;
     
     localStorage.setItem('cs_api_key', state.apiKey);
     localStorage.setItem('cs_profile_name', state.profileName);
     localStorage.setItem('cs_profile_headline', state.profileHeadline);
     localStorage.setItem('cs_profile_avatar', state.profileAvatar);
+    localStorage.setItem('cs_profile_verified', state.profileVerified);
     
     dom.previewName.textContent = state.profileName || 'Professional Writer';
     dom.previewHeadline.textContent = state.profileHeadline || 'Product Builder';
     updateAvatar(state.profileAvatar);
+    toggleVerifiedBadge(state.profileVerified);
     
     toggleDrawer(false);
   });
@@ -875,22 +1006,12 @@ function setupEventListeners() {
   dom.tabBtnDashboard.addEventListener('click', () => switchTab('dashboard'));
   dom.tabBtnPreview.addEventListener('click', () => switchTab('preview'));
   
-  // Real-time cringe analysis binding
   dom.rawInput.addEventListener('input', () => {
     const text = dom.rawInput.value;
-    const len = text.length;
-    dom.charCounter.textContent = `${len} / 3000`;
-    if (len > 3000) {
-      dom.charCounter.style.color = 'var(--color-danger)';
-    } else {
-      dom.charCounter.style.color = 'var(--color-text-secondary)';
-    }
-    
-    // Run diagnostics
+    calculateStats(text);
     analyzeCringe(text);
   });
 
-  // Preset chip loading
   document.querySelectorAll('.chip').forEach(chip => {
     chip.addEventListener('click', () => {
       const presetKey = chip.getAttribute('data-preset');
@@ -901,7 +1022,6 @@ function setupEventListeners() {
     });
   });
   
-  // See more toggle in mockup
   dom.previewSeeMore.addEventListener('click', () => {
     dom.previewPostBody.classList.toggle('collapsed');
     if (dom.previewPostBody.classList.contains('collapsed')) {
@@ -911,17 +1031,19 @@ function setupEventListeners() {
     }
   });
 
-  // Core trigger binding
   dom.btnShield.addEventListener('click', refactorPost);
   
   setupCopyHandler();
+  setupToolbarHandlers();
+  setupLikeHandler();
 }
 
 function init() {
   initConfig();
   setupEventListeners();
-  analyzeCringe(''); // Initial reset
-  console.log('CringeShield Refactoring Engine & Event Loop Initialized!');
+  calculateStats('');
+  analyzeCringe(''); // Initial gauge setup
+  console.log('CringeShield 2.0 Engine & Telemetry Initialized!');
 }
 
 document.addEventListener('DOMContentLoaded', init);

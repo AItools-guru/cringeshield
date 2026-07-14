@@ -13,11 +13,11 @@
       <header class="glass-panel">
         <div class="logo-container">
           <div class="shield-logo">CringeShield</div>
-          <span class="shield-tagline">LinkedIn De-Cringer & Copywriter</span>
+          <span class="shield-tagline">v2.0 • De-Cringer</span>
         </div>
         <div class="header-actions">
           <button id="btn-open-settings" class="btn" aria-label="Open Settings">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
             API & Profile Config
           </button>
         </div>
@@ -44,16 +44,40 @@
           <!-- Preset Templates Chips -->
           <div class="form-label" style="margin-bottom: 0.5rem;">Quick Start Templates</div>
           <div class="preset-chips-container">
-            <button class="chip" data-preset="meeting">Meeting Email</button>
-            <button class="chip" data-preset="spec">Over-engineered Spec</button>
-            <button class="chip" data-preset="rejected">Interview Rejection</button>
+            <button class="chip" data-preset="meeting">Meeting Sync</button>
+            <button class="chip" data-preset="spec">Technical Spec</button>
+            <button class="chip" data-preset="rejected">Job Rejection</button>
             <button class="chip" data-preset="launch">Generic AI Launch</button>
+          </div>
+
+          <!-- Editor Toolbar Controls -->
+          <div class="editor-toolbar">
+            <div class="toolbar-group">
+              <button id="btn-tool-space" class="btn-tool" title="Format paragraphs for mobile spacing">
+                ⚡ Auto-Space
+              </button>
+              <button id="btn-tool-lists" class="btn-tool" title="Strip hyphens and convert to clean bullets">
+                🔗 Clean Lists
+              </button>
+              <button id="btn-tool-debuzz" class="btn-tool" title="Replace AI buzzwords locally">
+                ❌ De-Buzz
+              </button>
+            </div>
+            <button id="btn-tool-clear" class="btn-tool btn-tool-clear" title="Clear text editor">
+              🗑️ Clear
+            </button>
           </div>
 
           <!-- Textarea Input -->
           <div class="text-input-wrapper">
             <textarea id="raw-post-input" class="textarea-cyber" placeholder="Paste your rough thought, robotic AI draft, or raw bullet points here..."></textarea>
-            <div id="char-counter" class="char-counter">0 / 3000</div>
+          </div>
+
+          <!-- Stats Bar -->
+          <div class="editor-stats-bar">
+            <div class="stat-item">Words: <span id="stat-words">0</span></div>
+            <div class="stat-item">Characters: <span id="stat-chars">0</span>/3000</div>
+            <div class="stat-item">Read Time: <span id="stat-readtime">0</span>s</div>
           </div>
 
           <!-- Config options -->
@@ -128,18 +152,62 @@
             <div class="cringe-dashboard-view">
               <!-- Radial Meter Gauge -->
               <div class="cringe-gauge-container">
-                <svg class="cringe-gauge-svg" width="180" height="180" viewBox="0 0 180 180">
+                <svg class="cringe-gauge-svg" width="170" height="170" viewBox="0 0 180 180">
                   <circle class="cringe-gauge-bg" cx="90" cy="90" r="70"></circle>
                   <circle id="cringe-gauge-circle" class="cringe-gauge-progress" cx="90" cy="90" r="70"></circle>
                 </svg>
                 <div class="cringe-score-display">
                   <div id="cringe-score-num" class="cringe-score-num">0%</div>
                   <div class="cringe-score-lbl">Cringe Score</div>
-                  <div id="cringe-score-verdict" class="cringe-score-verdict" style="color: var(--color-success)">Clean</div>
+                  <div id="cringe-score-verdict" class="cringe-score-verdict" style="color: var(--color-cyber-green)">Clean</div>
+                </div>
+              </div>
+
+              <!-- Telemetry breakdown metrics bars -->
+              <div class="metrics-breakdown-box">
+                <div class="metric-bar-group">
+                  <div class="metric-bar-header">
+                    <span>AI Buzzword Level</span>
+                    <span id="val-buzzwords" class="metric-val">0%</span>
+                  </div>
+                  <div class="metric-bar-track">
+                    <div id="fill-buzzwords" class="metric-bar-fill"></div>
+                  </div>
+                </div>
+
+                <div class="metric-bar-group">
+                  <div class="metric-bar-header">
+                    <span>Broetry Spacing Score</span>
+                    <span id="val-broetry" class="metric-val">0%</span>
+                  </div>
+                  <div class="metric-bar-track">
+                    <div id="fill-broetry" class="metric-bar-fill"></div>
+                  </div>
+                </div>
+
+                <div class="metric-bar-group">
+                  <div class="metric-bar-header">
+                    <span>Emoji & Clutter Density</span>
+                    <span id="val-emoji" class="metric-val">0%</span>
+                  </div>
+                  <div class="metric-bar-track">
+                    <div id="fill-emoji" class="metric-bar-fill"></div>
+                  </div>
+                </div>
+
+                <div class="metric-bar-group">
+                  <div class="metric-bar-header">
+                    <span>Accessibility & Spacing</span>
+                    <span id="val-a11y" class="metric-val">0%</span>
+                  </div>
+                  <div class="metric-bar-track">
+                    <div id="fill-a11y" class="metric-bar-fill"></div>
+                  </div>
                 </div>
               </div>
 
               <!-- Critique Checklist Cards -->
+              <div class="critique-summary-label">Audit Diagnostics Log</div>
               <div class="critique-container">
                 <!-- Card 1: Buzzwords -->
                 <div class="critique-card">
@@ -182,8 +250,12 @@
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                   </div>
                   <div class="linkedin-user-info">
-                    <div class="linkedin-name">
-                      <span id="preview-name">Professional Writer</span>
+                    <div class="linkedin-name-row">
+                      <span id="preview-name" class="linkedin-name">Professional Writer</span>
+                      <!-- Verified Badge -->
+                      <span id="preview-verified-badge" class="linkedin-verified-badge" title="Verified Creator">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"></path></svg>
+                      </span>
                       <span class="linkedin-conn-deg">• 1st</span>
                     </div>
                     <div class="linkedin-headline" id="preview-headline">Product Builder & Designer</div>
@@ -198,9 +270,20 @@
                 <div class="linkedin-post-body collapsed" id="preview-post-body">Your shielded and formatted post will render here...</div>
                 <button id="preview-see-more" class="linkedin-see-more hidden">...see more</button>
 
+                <!-- Social Engagement Counter Bar -->
+                <div class="linkedin-social-bar">
+                  <div class="linkedin-reactions-counter">
+                    <div class="reaction-icons-group">
+                      <div class="icon-circle-like">👍</div>
+                    </div>
+                    <span id="preview-likes-text"><span id="preview-likes-count">124</span> reactions</span>
+                  </div>
+                  <div>8 comments</div>
+                </div>
+
                 <!-- LinkedIn Action Buttons -->
                 <div class="linkedin-actions">
-                  <button class="linkedin-action-btn">
+                  <button id="btn-preview-like" class="linkedin-action-btn">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>
                     Like
                   </button>
@@ -243,7 +326,7 @@
         <div class="form-group">
           <label for="input-api-key" class="form-label">Gemini API Key</label>
           <input type="password" id="input-api-key" class="drawer-input-cyber" placeholder="Enter your gemini-2.5-flash API Key..." />
-          <div style="font-size: 0.75rem; color: var(--color-text-secondary); line-height: 1.3;">
+          <div style="font-size: 0.725rem; color: var(--color-text-secondary); line-height: 1.45;">
             Your key is saved locally in your browser's <code>localStorage</code>. It is sent directly to the official Google Gemini API endpoint.
           </div>
         </div>
@@ -262,6 +345,18 @@
         <div class="form-group">
           <label for="input-profile-avatar" class="form-label">Preview Avatar URL</label>
           <input type="text" id="input-profile-avatar" class="drawer-input-cyber" placeholder="https://example.com/avatar.jpg" value="" />
+        </div>
+
+        <!-- Custom Options -->
+        <div class="form-group">
+          <label class="form-label">Profile Badges</label>
+          <div class="drawer-toggle-row">
+            <span>Verified Checkmark Badge</span>
+            <label class="switch">
+              <input type="checkbox" id="input-profile-verified" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
         </div>
 
         <button id="btn-save-settings" class="btn btn-primary" style="margin-top: 1rem; justify-content: center;">
