@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%22 width=%22100%22 height=%22100%22><text y=%220.9em%22 font-size=%2290%22>🛡️</text></svg>" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="CringeShield - Audit, de-cringe, and format high-impact LinkedIn posts without the typical AI buzzwords." />
+    <title>CringeShield // LinkedIn Post Formatter & De-Cringer</title>
+  </head>
+  <body>
+    <div id="app">
+      <!-- Header -->
+      <header class="glass-panel">
+        <div class="logo-container">
+          <div class="shield-logo">CringeShield</div>
+          <span class="shield-tagline">LinkedIn De-Cringer & Copywriter</span>
+        </div>
+        <div class="header-actions">
+          <button id="btn-open-settings" class="btn" aria-label="Open Settings">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            API & Profile Config
+          </button>
+        </div>
+      </header>
+
+      <!-- Dashboard Grid -->
+      <main class="dashboard-grid">
+        
+        <!-- Left Pane: The Editor & Controls -->
+        <section class="glass-panel editor-pane" style="position: relative;">
+          <!-- Loader Overlay for AI refactoring -->
+          <div id="loader-overlay" class="loader-overlay">
+            <div class="cyber-spinner"></div>
+            <div class="loader-text">Shielding Post...</div>
+          </div>
+
+          <div class="pane-title">
+            <span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+              Post Editor
+            </span>
+          </div>
+
+          <!-- Preset Templates Chips -->
+          <div class="form-label" style="margin-bottom: 0.5rem;">Quick Start Templates</div>
+          <div class="preset-chips-container">
+            <button class="chip" data-preset="meeting">Meeting Email</button>
+            <button class="chip" data-preset="spec">Over-engineered Spec</button>
+            <button class="chip" data-preset="rejected">Interview Rejection</button>
+            <button class="chip" data-preset="launch">Generic AI Launch</button>
+          </div>
+
+          <!-- Textarea Input -->
+          <div class="text-input-wrapper">
+            <textarea id="raw-post-input" class="textarea-cyber" placeholder="Paste your rough thought, robotic AI draft, or raw bullet points here..."></textarea>
+            <div id="char-counter" class="char-counter">0 / 3000</div>
+          </div>
+
+          <!-- Config options -->
+          <div class="config-grid">
+            <div class="form-group">
+              <label for="select-formula" class="form-label">Copywriting Formula</label>
+              <select id="select-formula" class="select-cyber">
+                <option value="hook-value-cta">Hook - Value - Call To Action</option>
+                <option value="pas">PAS (Problem - Agitate - Solve)</option>
+                <option value="aida">AIDA (Attention - Interest - Desire - Action)</option>
+                <option value="contrarian">Contrarian PM Take</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="select-tone" class="form-label">Persona / Tone</label>
+              <select id="select-tone" class="select-cyber">
+                <option value="pragmatic">The Pragmatic Builder</option>
+                <option value="storyteller">The Startup Storyteller</option>
+                <option value="critic">The Data-Driven Critic</option>
+                <option value="thoughtleader">Thought Leader (De-Cringed)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Constraints checklist -->
+          <div class="form-label" style="margin-bottom: 0.5rem;">Sanitation Constraints</div>
+          <div class="constraint-options">
+            <label class="checkbox-container">
+              <input type="checkbox" id="check-buzzwords" checked />
+              <span class="custom-checkbox"></span>
+              <span>Filter AI Buzzwords</span>
+            </label>
+            <label class="checkbox-container">
+              <input type="checkbox" id="check-hyphens" checked />
+              <span class="custom-checkbox"></span>
+              <span>Zero Hyphens (Clean lists)</span>
+            </label>
+            <label class="checkbox-container">
+              <input type="checkbox" id="check-spacing" checked />
+              <span class="custom-checkbox"></span>
+              <span>Double-spaced (Mobile)</span>
+            </label>
+            <label class="checkbox-container">
+              <input type="checkbox" id="check-hashtags" checked />
+              <span class="custom-checkbox"></span>
+              <span>Limit Hashtags (3-4 bottom)</span>
+            </label>
+          </div>
+
+          <!-- Trigger Button -->
+          <button id="btn-shield-post" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 0.85rem;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            Shield Post
+          </button>
+        </section>
+
+        <!-- Right Pane: Results & Preview -->
+        <section class="glass-panel results-pane">
+          <div class="tab-nav">
+            <button id="tab-btn-dashboard" class="tab-btn active" data-tab="dashboard">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: text-bottom; margin-right: 0.25rem;"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+              Cringe Analyzer
+            </button>
+            <button id="tab-btn-preview" class="tab-btn" data-tab="preview">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: text-bottom; margin-right: 0.25rem;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+              LinkedIn Preview
+            </button>
+          </div>
+
+          <!-- Tab Content 1: Diagnostics & Gauge -->
+          <div id="tab-content-dashboard" class="tab-content active">
+            <div class="cringe-dashboard-view">
+              <!-- Radial Meter Gauge -->
+              <div class="cringe-gauge-container">
+                <svg class="cringe-gauge-svg" width="180" height="180" viewBox="0 0 180 180">
+                  <circle class="cringe-gauge-bg" cx="90" cy="90" r="70"></circle>
+                  <circle id="cringe-gauge-circle" class="cringe-gauge-progress" cx="90" cy="90" r="70"></circle>
+                </svg>
+                <div class="cringe-score-display">
+                  <div id="cringe-score-num" class="cringe-score-num">0%</div>
+                  <div class="cringe-score-lbl">Cringe Score</div>
+                  <div id="cringe-score-verdict" class="cringe-score-verdict" style="color: var(--color-success)">Clean</div>
+                </div>
+              </div>
+
+              <!-- Critique Checklist Cards -->
+              <div class="critique-container">
+                <!-- Card 1: Buzzwords -->
+                <div class="critique-card">
+                  <div id="critique-icon-buzzwords" class="critique-icon pass">✓</div>
+                  <div class="critique-details">
+                    <div class="critique-heading">AI Buzzwords & Jargon</div>
+                    <div id="critique-desc-buzzwords" class="critique-description">No generic buzzwords detected. Clean draft.</div>
+                    <div id="critique-buzzwords-highlight" class="critique-buzzwords-highlight"></div>
+                  </div>
+                </div>
+                
+                <!-- Card 2: Broetry Spacing -->
+                <div class="critique-card">
+                  <div id="critique-icon-broetry" class="critique-icon pass">✓</div>
+                  <div class="critique-details">
+                    <div class="critique-heading">Line Spacing & "Broetry" Density</div>
+                    <div id="critique-desc-broetry" class="critique-description">Excellent readability. Sentence structures look organic.</div>
+                  </div>
+                </div>
+
+                <!-- Card 3: Emojis & Formatting -->
+                <div class="critique-card">
+                  <div id="critique-icon-formatting" class="critique-icon pass">✓</div>
+                  <div class="critique-details">
+                    <div class="critique-heading">Formatting & Emojis</div>
+                    <div id="critique-desc-formatting" class="critique-description">Normal emoji density and clean spacing tags. No accessibility issues.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab Content 2: Simulated Mobile Feed Preview -->
+          <div id="tab-content-preview" class="tab-content">
+            <div class="linkedin-mockup-view">
+              <div class="linkedin-card">
+                <!-- Profile Header info -->
+                <div class="linkedin-header">
+                  <div class="linkedin-avatar" id="preview-avatar">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                  </div>
+                  <div class="linkedin-user-info">
+                    <div class="linkedin-name">
+                      <span id="preview-name">Professional Writer</span>
+                      <span class="linkedin-conn-deg">• 1st</span>
+                    </div>
+                    <div class="linkedin-headline" id="preview-headline">Product Builder & Designer</div>
+                    <div class="linkedin-meta">
+                      <span>1h • Edited •</span>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"></path></svg>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Main Post Content -->
+                <div class="linkedin-post-body collapsed" id="preview-post-body">Your shielded and formatted post will render here...</div>
+                <button id="preview-see-more" class="linkedin-see-more hidden">...see more</button>
+
+                <!-- LinkedIn Action Buttons -->
+                <div class="linkedin-actions">
+                  <button class="linkedin-action-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>
+                    Like
+                  </button>
+                  <button class="linkedin-action-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                    Comment
+                  </button>
+                  <button class="linkedin-action-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13"></path></svg>
+                    Share
+                  </button>
+                  <button class="linkedin-action-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                    Send
+                  </button>
+                </div>
+              </div>
+
+              <!-- Output utility buttons -->
+              <div class="output-actions-bar">
+                <button id="btn-copy-post" class="btn btn-primary">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                  Copy Format
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <!-- Slide out configuration drawer -->
+      <div id="settings-overlay" class="settings-overlay"></div>
+      <div id="settings-drawer" class="settings-drawer">
+        <div class="settings-drawer-header">
+          <div class="settings-drawer-title">Config Drawer</div>
+          <button id="btn-close-settings" class="settings-drawer-close" aria-label="Close Settings">×</button>
+        </div>
+
+        <!-- API Config -->
+        <div class="form-group">
+          <label for="input-api-key" class="form-label">Gemini API Key</label>
+          <input type="password" id="input-api-key" class="drawer-input-cyber" placeholder="Enter your gemini-2.5-flash API Key..." />
+          <div style="font-size: 0.75rem; color: var(--color-text-secondary); line-height: 1.3;">
+            Your key is saved locally in your browser's <code>localStorage</code>. It is sent directly to the official Google Gemini API endpoint.
+          </div>
+        </div>
+
+        <!-- Profile Mock details config -->
+        <div class="form-group">
+          <label for="input-profile-name" class="form-label">Preview Profile Name</label>
+          <input type="text" id="input-profile-name" class="drawer-input-cyber" value="Saurabh Shidhore" />
+        </div>
+
+        <div class="form-group">
+          <label for="input-profile-headline" class="form-label">Preview Headline</label>
+          <input type="text" id="input-profile-headline" class="drawer-input-cyber" value="Product Leader & Builder | Building AI Tools" />
+        </div>
+
+        <div class="form-group">
+          <label for="input-profile-avatar" class="form-label">Preview Avatar URL</label>
+          <input type="text" id="input-profile-avatar" class="drawer-input-cyber" placeholder="https://example.com/avatar.jpg" value="" />
+        </div>
+
+        <button id="btn-save-settings" class="btn btn-primary" style="margin-top: 1rem; justify-content: center;">
+          Save Config
+        </button>
+      </div>
+
+      <!-- Footer -->
+      <footer style="margin-top: 2rem; border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 1rem; font-size: 0.75rem; color: var(--color-text-secondary); text-align: center; display: flex; justify-content: space-between; align-items: center;">
+        <div>Shielding your LinkedIn post from typical corporate AI hallucinations.</div>
+        <div>Created by <a href="https://github.com/AItools-guru" target="_blank" style="color: var(--color-accent); text-decoration: none;">AItools-guru</a></div>
+      </footer>
+    </div>
+    
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
