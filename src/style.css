@@ -1178,3 +1178,18 @@ input:checked + .slider:before {
     opacity: 1;
   }
 }
+
+/* Typography Wrap Optimizations */
+.shield-logo,
+.pane-title,
+.settings-drawer-title,
+.critique-heading,
+.linkedin-name,
+.linkedin-headline {
+  text-wrap: balance;
+}
+
+.critique-description,
+.linkedin-post-body {
+  text-wrap: pretty;
+}
