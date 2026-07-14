@@ -64,6 +64,7 @@ const dom = {
   inputProfileAvatar: document.getElementById('input-profile-avatar'),
   inputProfileVerified: document.getElementById('input-profile-verified'),
   previewVerifiedBadge: document.getElementById('preview-verified-badge'),
+  previewSandboxAlert: document.getElementById('preview-sandbox-alert'),
   
   // Document Stats elements
   statWords: document.getElementById('stat-words'),
@@ -703,14 +704,14 @@ function runLocalCleanLists(text) {
 function fallbackLocalRefactor(text, formula, tone, constraints) {
   let cleaned = text;
   
-  if (constraints.spacing) {
-    cleaned = runLocalAutoSpace(cleaned);
-  }
   if (constraints.buzzwords) {
     cleaned = runLocalDeBuzz(cleaned);
   }
   if (constraints.hyphens) {
     cleaned = runLocalCleanLists(cleaned);
+  }
+  if (constraints.spacing) {
+    cleaned = runLocalAutoSpace(cleaned);
   }
   if (constraints.hashtags) {
     const hashtags = cleaned.match(/#[a-zA-Z0-9_]+/g) || [];
@@ -720,51 +721,33 @@ function fallbackLocalRefactor(text, formula, tone, constraints) {
     cleaned = cleaned.trim() + '\n\n' + chosenTags.join(' ');
   }
 
-  let header = "Here is our product check outline:";
-  let footer = "Let's build.";
-
-  if (formula === 'pas') {
-    header = "The primary bottleneck in most development cycles is alignment.";
-    footer = "Try setting clear timelines and see how workflow speeds up.";
-  } else if (formula === 'aida') {
-    header = "Teams spend hours trying to sync up every week.";
-    footer = "Let's make alignment sessions faster.";
-  } else if (formula === 'contrarian') {
-    header = "Aligning your team is actually wasting their time.";
-    footer = "Give developers requirements instead of meetings.";
-  }
-
-  const lines = cleaned.split('\n').filter(l => l.trim().length > 0);
-  const formattedLines = [
-    header,
-    ...lines.slice(0, 4),
-    footer
-  ];
-
-  return formattedLines.join('\n\n');
+  return cleaned.trim();
 }
 
 // Preset matching fallback
 function runSimulatorRefactor(text, formula, tone) {
-  let detectedPreset = 'meeting';
+  let detectedPreset = null;
+  const normalizedInput = text.trim().toLowerCase();
   
-  if (text.includes('notification') || text.includes('pub-sub')) {
-    detectedPreset = 'spec';
-  } else if (text.includes('rejected') || text.includes('interview')) {
-    detectedPreset = 'rejected';
-  } else if (text.includes('thrilled to announce') || text.includes('launch')) {
-    detectedPreset = 'launch';
-  } else if (text.includes('Crushing') || text.includes('Tuesday') || text.includes('alignment')) {
+  if (normalizedInput.includes('crushing your tuesday') || normalizedInput.includes('alignment session')) {
     detectedPreset = 'meeting';
+  } else if (normalizedInput.includes('notification component') || normalizedInput.includes('pub-sub model')) {
+    detectedPreset = 'spec';
+  } else if (normalizedInput.includes('rejected from another job') || normalizedInput.includes('interview process')) {
+    detectedPreset = 'rejected';
+  } else if (normalizedInput.includes('thrilled to announce') || normalizedInput.includes('official launch')) {
+    detectedPreset = 'launch';
   }
 
-  const presetResults = SIMULATED_OUTPUTS[detectedPreset];
-  if (presetResults) {
-    const selectedForm = presetResults[formula] ? formula : Object.keys(presetResults)[0];
-    const toneResults = presetResults[selectedForm];
-    if (toneResults) {
-      const selectedTone = toneResults[tone] ? tone : Object.keys(toneResults)[0];
-      return toneResults[selectedTone];
+  if (detectedPreset) {
+    const presetResults = SIMULATED_OUTPUTS[detectedPreset];
+    if (presetResults) {
+      const selectedForm = presetResults[formula] ? formula : Object.keys(presetResults)[0];
+      const toneResults = presetResults[selectedForm];
+      if (toneResults) {
+        const selectedTone = toneResults[tone] ? tone : Object.keys(toneResults)[0];
+        return { text: toneResults[selectedTone], isPreset: true };
+      }
     }
   }
 
@@ -774,7 +757,7 @@ function runSimulatorRefactor(text, formula, tone) {
     spacing: dom.checkSpacing.checked,
     hashtags: dom.checkHashtags.checked
   };
-  return fallbackLocalRefactor(text, formula, tone, constraints);
+  return { text: fallbackLocalRefactor(text, formula, tone, constraints), isPreset: false };
 }
 
 // Gemini API Caller
@@ -860,13 +843,17 @@ async function refactorPost() {
 
   try {
     let outputText = '';
+    let showSandboxAlert = false;
     
     if (state.apiKey) {
       outputText = await callGeminiApi(inputText, formula, tone, constraints);
+      showSandboxAlert = false;
     } else {
       console.log('API Key not set. Running in Simulator Mode...');
       await new Promise(resolve => setTimeout(resolve, 1200));
-      outputText = runSimulatorRefactor(inputText, formula, tone);
+      const result = runSimulatorRefactor(inputText, formula, tone);
+      outputText = result.text;
+      showSandboxAlert = !result.isPreset;
     }
 
     state.formattedPost = outputText;
@@ -876,17 +863,32 @@ async function refactorPost() {
     switchTab('preview');
     calculateSeeMore();
     
+    // Toggle Sandbox Alert display
+    if (showSandboxAlert) {
+      dom.previewSandboxAlert.style.display = 'flex';
+    } else {
+      dom.previewSandboxAlert.style.display = 'none';
+    }
+    
     // Evaluate clean score
     analyzeCringe(outputText);
 
   } catch (error) {
     console.error('Error shielding post:', error);
     alert(`Shielding failed: ${error.message}. Running Simulator fallback...`);
-    const outputText = runSimulatorRefactor(inputText, formula, tone);
+    const result = runSimulatorRefactor(inputText, formula, tone);
+    const outputText = result.text;
     state.formattedPost = outputText;
     dom.previewPostBody.textContent = outputText;
     switchTab('preview');
     calculateSeeMore();
+    
+    if (!state.apiKey && !result.isPreset) {
+      dom.previewSandboxAlert.style.display = 'flex';
+    } else {
+      dom.previewSandboxAlert.style.display = 'none';
+    }
+    
     analyzeCringe(outputText);
   } finally {
     dom.loaderOverlay.classList.remove('active');
