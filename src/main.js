@@ -19,11 +19,13 @@ const dom = {
   tabBtnPreview: document.getElementById('tab-btn-preview'),
   tabBtnDiff: document.getElementById('tab-btn-diff'),
   tabBtnCarousel: document.getElementById('tab-btn-carousel'),
+  tabBtnGuide: document.getElementById('tab-btn-guide'),
   
   tabContentDashboard: document.getElementById('tab-content-dashboard'),
   tabContentPreview: document.getElementById('tab-content-preview'),
   tabContentDiff: document.getElementById('tab-content-diff'),
   tabContentCarousel: document.getElementById('tab-content-carousel'),
+  tabContentGuide: document.getElementById('tab-content-guide'),
   
   previewAvatar: document.getElementById('preview-avatar'),
   previewName: document.getElementById('preview-name'),
@@ -450,7 +452,7 @@ function toggleDrawer(open) {
 }
 
 function switchTab(tabId) {
-  const tabs = ['dashboard', 'preview', 'diff', 'carousel'];
+  const tabs = ['dashboard', 'preview', 'diff', 'carousel', 'guide'];
   tabs.forEach(t => {
     const btn = dom[`tabBtn${t.charAt(0).toUpperCase() + t.slice(1)}`];
     const content = dom[`tabContent${t.charAt(0).toUpperCase() + t.slice(1)}`];
@@ -1423,6 +1425,7 @@ function setupEventListeners() {
   dom.tabBtnPreview.addEventListener('click', () => switchTab('preview'));
   dom.tabBtnDiff.addEventListener('click', () => switchTab('diff'));
   dom.tabBtnCarousel.addEventListener('click', () => switchTab('carousel'));
+  dom.tabBtnGuide.addEventListener('click', () => switchTab('guide'));
 
   // Carousel Controls
   dom.carouselThemeSelect.addEventListener('change', renderCurrentSlide);
