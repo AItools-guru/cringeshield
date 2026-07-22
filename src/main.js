@@ -83,6 +83,7 @@ const dom = {
   btnToolSpace: document.getElementById('btn-tool-space'),
   btnToolLists: document.getElementById('btn-tool-lists'),
   btnToolDebuzz: document.getElementById('btn-tool-debuzz'),
+  btnToolVault: document.getElementById('btn-tool-vault'),
   btnToolClear: document.getElementById('btn-tool-clear'),
   
   // Interactive preview buttons
@@ -95,6 +96,7 @@ const dom = {
 
   // Carousel Elements
   carouselThemeSelect: document.getElementById('carousel-theme-select'),
+  carouselTitleInput: document.getElementById('carousel-title-input'),
   carouselWatermarkInput: document.getElementById('carousel-watermark-input'),
   btnExportPdf: document.getElementById('btn-export-pdf'),
   btnPrevSlide: document.getElementById('btn-prev-slide'),
@@ -1006,31 +1008,35 @@ function renderDiffView(originalText, formattedText) {
     return;
   }
   
-  const origWords = originalText.trim().split(/\s+/);
-  const formWords = (formattedText || originalText).trim().split(/\s+/);
+  const origLines = originalText.trim().split('\n');
+  const formLines = (formattedText || originalText).trim().split('\n');
   
-  // Flag deleted buzzwords/cringe in original text
-  let origMarkup = '';
-  origWords.forEach(w => {
-    const clean = w.toLowerCase().replace(/[^a-z0-9]/g, '');
-    if (BUZZWORDS.includes(clean)) {
-      origMarkup += `<span class="diff-del-word">${escapeHtml(w)}</span> `;
-    } else {
-      origMarkup += `${escapeHtml(w)} `;
-    }
-  });
-  
-  // Flag newly added phrases in formatted output
-  const origWordSet = new Set(origWords.map(w => w.toLowerCase()));
-  let formMarkup = '';
-  formWords.forEach(w => {
-    const clean = w.toLowerCase();
-    if (!origWordSet.has(clean) && clean.length > 2) {
-      formMarkup += `<span class="diff-add-word">${escapeHtml(w)}</span> `;
-    } else {
-      formMarkup += `${escapeHtml(w)} `;
-    }
-  });
+  // Highlight removed buzzwords in original text line by line
+  let origMarkup = origLines.map(line => {
+    if (!line.trim()) return '<br>';
+    const words = line.split(/\s+/);
+    return words.map(w => {
+      const clean = w.toLowerCase().replace(/[^a-z0-9]/g, '');
+      if (BUZZWORDS.includes(clean)) {
+        return `<span class="diff-del-word">${escapeHtml(w)}</span>`;
+      }
+      return escapeHtml(w);
+    }).join(' ');
+  }).join('<br>');
+
+  // Highlight newly added terms in formatted output line by line
+  const origWordSet = new Set(originalText.toLowerCase().split(/\s+/));
+  let formMarkup = formLines.map(line => {
+    if (!line.trim()) return '<br>';
+    const words = line.split(/\s+/);
+    return words.map(w => {
+      const clean = w.toLowerCase();
+      if (!origWordSet.has(clean) && clean.length > 2) {
+        return `<span class="diff-add-word">${escapeHtml(w)}</span>`;
+      }
+      return escapeHtml(w);
+    }).join(' ');
+  }).join('<br>');
   
   dom.diffOriginalContent.innerHTML = origMarkup;
   dom.diffFormattedContent.innerHTML = formMarkup;
@@ -1060,7 +1066,18 @@ function renderCurrentSlide() {
   
   dom.carouselDisplayCounter.textContent = `${currentSlideIndex + 1}/${total}`;
   dom.carouselSlideIndicator.textContent = `Slide ${currentSlideIndex + 1} of ${total}`;
-  dom.carouselDisplayText.textContent = carouselSlides[currentSlideIndex] || '';
+  
+  const textContent = carouselSlides[currentSlideIndex] || '';
+  dom.carouselDisplayText.textContent = textContent;
+  
+  // Auto-font sizing for slide body fit
+  if (textContent.length > 220) {
+    dom.carouselDisplayText.style.fontSize = '0.9rem';
+  } else {
+    dom.carouselDisplayText.style.fontSize = '1.05rem';
+  }
+  
+  dom.carouselDisplayBrand.textContent = dom.carouselTitleInput.value || 'CringeShield';
   dom.carouselDisplayWatermark.textContent = dom.carouselWatermarkInput.value || '@saurabhshidhore';
   
   const theme = dom.carouselThemeSelect.value;
@@ -1157,19 +1174,25 @@ function renderVaultItems() {
     return;
   }
   
+  const btnLabel = currentVaultCategory === 'cta' ? 'Append CTA' : 'Insert Hook';
+  
   dom.vaultItemsContainer.innerHTML = filtered.map(item => `
     <div class="vault-card">
       <div class="vault-card-text">${escapeHtml(item)}</div>
-      <button class="btn-use-vault" data-text="${escapeHtml(item)}">Insert Hook</button>
+      <button class="btn-use-vault" data-text="${escapeHtml(item)}">${btnLabel}</button>
     </div>
   `).join('');
   
   dom.vaultItemsContainer.querySelectorAll('.btn-use-vault').forEach(btn => {
     btn.addEventListener('click', () => {
-      const hookText = btn.getAttribute('data-text');
-      if (hookText) {
+      const itemText = btn.getAttribute('data-text');
+      if (itemText) {
         const currentVal = dom.rawInput.value;
-        dom.rawInput.value = hookText + '\n\n' + currentVal;
+        if (currentVaultCategory === 'cta') {
+          dom.rawInput.value = currentVal ? (currentVal.trim() + '\n\n' + itemText) : itemText;
+        } else {
+          dom.rawInput.value = currentVal ? (itemText + '\n\n' + currentVal.trim()) : itemText;
+        }
         dom.rawInput.dispatchEvent(new Event('input'));
         toggleHooksModal(false);
       }
@@ -1265,8 +1288,11 @@ function renderDraftsList() {
       const found = getDrafts().find(item => item.id === id);
       if (found) {
         dom.rawInput.value = found.text;
-        state.formattedPost = found.formatted;
+        state.formattedPost = found.formatted || found.text;
+        dom.previewPostBody.textContent = state.formattedPost;
         dom.rawInput.dispatchEvent(new Event('input'));
+        renderDiffView(found.text, state.formattedPost);
+        updateCarouselSlides(state.formattedPost);
         toggleDraftsDrawer(false);
       }
     });
@@ -1338,6 +1364,10 @@ function setupToolbarHandlers() {
     }
   });
 
+  dom.btnToolVault.addEventListener('click', () => {
+    toggleHooksModal(true);
+  });
+
   dom.btnToolClear.addEventListener('click', () => {
     dom.rawInput.value = '';
     dom.rawInput.dispatchEvent(new Event('input'));
@@ -1396,6 +1426,7 @@ function setupEventListeners() {
 
   // Carousel Controls
   dom.carouselThemeSelect.addEventListener('change', renderCurrentSlide);
+  dom.carouselTitleInput.addEventListener('input', renderCurrentSlide);
   dom.carouselWatermarkInput.addEventListener('input', renderCurrentSlide);
   dom.btnPrevSlide.addEventListener('click', () => {
     if (currentSlideIndex > 0) {
