@@ -15,6 +15,13 @@
           <div class="shield-logo">CringeShield</div>
           <span class="shield-tagline">v2.0 • De-Cringer</span>
         </div>
+
+        <!-- View Switcher Pills -->
+        <div class="view-mode-pill-container">
+          <button id="btn-view-landing" class="view-mode-pill active" title="View Landing Showcase">🌐 Landing Showcase</button>
+          <button id="btn-view-app" class="view-mode-pill" title="View App Workspace">🛡️ Workspace App</button>
+        </div>
+
         <div class="header-actions">
           <button id="btn-open-hooks" class="btn" aria-label="Open Hook Vault">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
@@ -31,8 +38,260 @@
         </div>
       </header>
 
-      <!-- Dashboard Grid -->
-      <main class="dashboard-grid">
+      <!-- View 1: Seamless Landing Showcase View -->
+      <div id="landing-hero-view" class="landing-view-container active">
+        
+        <!-- Hero Banner -->
+        <section class="landing-hero">
+          <div class="hero-badge">🛡️ Cyberpunk LinkedIn Copy Refactoring Engine</div>
+          <h1 class="hero-title">Stop Posting <span class="gradient-text">Cringe LinkedIn Fluff</span>.</h1>
+          <p class="hero-subtitle">
+            Audit, de-cringe, and transform your raw drafts into high-converting copy and downloadable 4:5 PDF Carousels—without robotic AI buzzwords or accessibility-breaking unicode fonts.
+          </p>
+          <div class="hero-cta-group">
+            <button id="btn-hero-launch" class="btn-hero btn-hero-primary">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+              Launch Free Workspace
+            </button>
+            <a href="https://github.com/AItools-guru/cringeshield" target="_blank" rel="noopener noreferrer" class="btn-hero btn-hero-secondary">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+              GitHub Stars
+            </a>
+          </div>
+
+          <!-- Hero Interactive Mockup Showcase Card -->
+          <div class="hero-mockup-card">
+            <div class="mockup-header">
+              <div class="dot red"></div>
+              <div class="dot yellow"></div>
+              <div class="dot green"></div>
+              <span class="mockup-url">https://aitools-guru.github.io/cringeshield</span>
+            </div>
+            <div class="mockup-content">
+              <div class="mockup-left">
+                <div class="mockup-tag del">🔴 Raw Draft (Before)</div>
+                <div class="mockup-code">
+                  "I am humbled and honored to announce that after delving deep into continuous learning, our game-changing paradigm shift is a testament to our synergy..."
+                </div>
+              </div>
+              <div class="mockup-arrow">➔</div>
+              <div class="mockup-right">
+                <div class="mockup-tag add">🟢 CringeShield De-Cringed (After)</div>
+                <div class="mockup-code">
+                  "We just shipped our updated product roadmap. Here are 3 hard lessons we learned after analyzing 500 user onboardings:"
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Stat & Trust Bar -->
+        <section class="trust-bar">
+          <div class="trust-stat">
+            <span class="stat-num">30+</span>
+            <span class="stat-lbl">AI Buzzwords Purged</span>
+          </div>
+          <div class="trust-divider"></div>
+          <div class="trust-stat">
+            <span class="stat-num">100%</span>
+            <span class="stat-lbl">Client-Side Private</span>
+          </div>
+          <div class="trust-divider"></div>
+          <div class="trust-stat">
+            <span class="stat-num">$0</span>
+            <span class="stat-lbl">Middleman Fees</span>
+          </div>
+          <div class="trust-divider"></div>
+          <div class="trust-stat">
+            <span class="stat-num">5-in-1</span>
+            <span class="stat-lbl">Integrated Copy Suite</span>
+          </div>
+        </section>
+
+        <!-- Competitor Comparison Section -->
+        <section class="landing-section">
+          <div class="landing-section-header">
+            <h2 class="section-title">⚡ Why CringeShield Beats Top Competitors</h2>
+            <p class="section-subtitle">A feature-by-feature comparative matrix showing why technical builders prefer CringeShield.</p>
+          </div>
+
+          <div class="competitor-table-container">
+            <table class="competitor-table">
+              <thead>
+                <tr>
+                  <th>Feature / Capability</th>
+                  <th>AuthoredUp ($20/mo)</th>
+                  <th>Taplio ($39/mo)</th>
+                  <th>aiCarousels ($15/mo)</th>
+                  <th class="col-highlight">🛡️ CringeShield (Free)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Cringe & Buzzword Detection</strong></td>
+                  <td>❌ No</td>
+                  <td>❌ No</td>
+                  <td>❌ No</td>
+                  <td class="col-highlight">✅ <strong>0-100% Dynamic Gauge</strong></td>
+                </tr>
+                <tr>
+                  <td><strong>Accessibility (A11y) Guard</strong></td>
+                  <td>❌ Promotes unicode</td>
+                  <td>❌ No check</td>
+                  <td>N/A</td>
+                  <td class="col-highlight">✅ <strong>Flags breaking fonts & tags</strong></td>
+                </tr>
+                <tr>
+                  <td><strong>Before & After Visual Diff</strong></td>
+                  <td>❌ No</td>
+                  <td>❌ No</td>
+                  <td>❌ No</td>
+                  <td class="col-highlight">✅ <strong>Side-by-side color diff</strong></td>
+                </tr>
+                <tr>
+                  <td><strong>4:5 PDF Carousel Builder</strong></td>
+                  <td>❌ No</td>
+                  <td>❌ No</td>
+                  <td>✅ Paid plan only</td>
+                  <td class="col-highlight">✅ <strong>5 themes + 1-Click PDF export</strong></td>
+                </tr>
+                <tr>
+                  <td><strong>Viral Hook & CTA Vault</strong></td>
+                  <td>✅ Paid</td>
+                  <td>✅ Paid</td>
+                  <td>❌ No</td>
+                  <td class="col-highlight">✅ <strong>35+ Built-in templates</strong></td>
+                </tr>
+                <tr>
+                  <td><strong>Flesch-Kincaid Readability</strong></td>
+                  <td>⚠️ Basic</td>
+                  <td>❌ No</td>
+                  <td>❌ No</td>
+                  <td class="col-highlight">✅ <strong>Grade score telemetry</strong></td>
+                </tr>
+                <tr>
+                  <td><strong>Privacy & Security</strong></td>
+                  <td>⚠️ Cloud storage</td>
+                  <td>⚠️ Cloud storage</td>
+                  <td>⚠️ Cloud storage</td>
+                  <td class="col-highlight">✅ <strong>100% Client-Side Local</strong></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Feature Grid Showcase -->
+        <section class="landing-section">
+          <div class="landing-section-header">
+            <h2 class="section-title">✨ Power Features Built for High-Impact Copy</h2>
+            <p class="section-subtitle">Everything you need to write clean, engagement-ready LinkedIn posts that rank high in feed algorithms.</p>
+          </div>
+
+          <div class="landing-feature-grid">
+            <div class="landing-feature-card">
+              <div class="feature-card-icon">📊</div>
+              <div class="feature-card-title">Dynamic Cringe Meter</div>
+              <div class="feature-card-desc">Circular SVG speedometer gauge analyzing your draft in real-time across 4 telemetry categories: AI buzzwords, broetry spacing, emoji density, and accessibility health.</div>
+            </div>
+
+            <div class="landing-feature-card">
+              <div class="feature-card-icon">⇄</div>
+              <div class="feature-card-title">Visual Diff Visualizer</div>
+              <div class="feature-card-desc">Compare your raw original draft side-by-side with the refactored output. Red strikethroughs highlight purged jargon; green highlights show added value.</div>
+            </div>
+
+            <div class="landing-feature-card">
+              <div class="feature-card-icon">🎠</div>
+              <div class="feature-card-title">1-Click PDF Carousel Generator</div>
+              <div class="feature-card-desc">Splits long posts into mobile-optimized 4:5 document slides. Select from 5 aesthetic visual themes, add brand titles, and download multi-page PDFs instantly!</div>
+            </div>
+
+            <div class="landing-feature-card">
+              <div class="feature-card-icon">⚡</div>
+              <div class="feature-card-title">Viral Hook & CTA Vault</div>
+              <div class="feature-card-desc">35+ high-converting hook openers and CTAs categorized into Curiosity, Data Insights, Contrarian, Story Starters, and Conversion CTAs with smart top/bottom insertion.</div>
+            </div>
+
+            <div class="landing-feature-card">
+              <div class="feature-card-icon">📖</div>
+              <div class="feature-card-title">Flesch-Kincaid Telemetry</div>
+              <div class="feature-card-desc">Computes reading ease grade level live as you type. Ensures your copy targets the 6th–9th grade reading sweet spot for maximum mobile retention.</div>
+            </div>
+
+            <div class="landing-feature-card">
+              <div class="feature-card-icon">🔒</div>
+              <div class="feature-card-title">100% Client-Side Privacy</div>
+              <div class="feature-card-desc">No middleman server logging your API keys or post drafts. Everything executes inside your browser using encrypted local storage.</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- FAQ Accordion Section -->
+        <section class="landing-section">
+          <div class="landing-section-header">
+            <h2 class="section-title">❓ Frequently Asked Questions</h2>
+            <p class="section-subtitle">Got questions about CringeShield? We've got answers.</p>
+          </div>
+
+          <div class="faq-container">
+            <div class="faq-item">
+              <button class="faq-question">
+                <span>Is CringeShield completely free to use?</span>
+                <span class="faq-icon">+</span>
+              </button>
+              <div class="faq-answer">
+                Yes! CringeShield is 100% open-source under the MIT License. It includes an offline <strong>Simulator Mode</strong> out of the box, and supports your own direct Google Gemini API key if you want live AI refactoring.
+              </div>
+            </div>
+
+            <div class="faq-item">
+              <button class="faq-question">
+                <span>How are my API key and post drafts protected?</span>
+                <span class="faq-icon">+</span>
+              </button>
+              <div class="faq-answer">
+                CringeShield is a 100% client-side application. Your Gemini API key and post drafts are saved strictly in your browser's private <code>localStorage</code>. No text or keys ever touch an external tracking server.
+              </div>
+            </div>
+
+            <div class="faq-item">
+              <button class="faq-question">
+                <span>How does the PDF Carousel Generator work?</span>
+                <span class="faq-icon">+</span>
+              </button>
+              <div class="faq-answer">
+                CringeShield automatically parses your post paragraphs into individual 4:5 ratio slide cards, renders them using custom CSS themes, and compiles them into a multi-page PDF document via <code>jsPDF</code> and <code>html2canvas</code> for 1-click LinkedIn Document uploads.
+              </div>
+            </div>
+
+            <div class="faq-item">
+              <button class="faq-question">
+                <span>Why does CringeShield warn against Unicode bold fonts?</span>
+                <span class="faq-icon">+</span>
+              </button>
+              <div class="faq-answer">
+                Unicode pseudo-bold fonts (e.g., 𝑩𝒐𝒍𝒅 𝑻𝒆𝒙𝒕) break screen readers for visually impaired users, fail in search indexing, and render as blank boxes on older mobile devices. CringeShield enforces clean, accessible formatting.
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Landing Footer CTA -->
+        <section class="landing-footer-cta">
+          <h3 class="footer-cta-title">Ready to De-Cringe Your LinkedIn Feed?</h3>
+          <p class="footer-cta-desc">Start building high-converting, professional LinkedIn posts in seconds.</p>
+          <button id="btn-bottom-launch" class="btn-hero btn-hero-primary" style="margin-top: 1rem;">
+            ⚡ Open Workspace App Now
+          </button>
+        </section>
+
+      </div>
+
+      <!-- View 2: App Workspace View -->
+      <div id="app-workspace-view" class="app-workspace-container">
+        <!-- Dashboard Grid -->
+        <main class="dashboard-grid">
         
         <!-- Left Pane: The Editor & Controls -->
         <section class="glass-panel editor-pane" style="position: relative;">
@@ -499,6 +758,7 @@
           </div>
         </section>
       </main>
+      </div><!-- End app-workspace-view -->
 
       <!-- Hook & CTA Vault Modal -->
       <div id="hooks-modal-overlay" class="modal-overlay"></div>

@@ -15,6 +15,13 @@ const dom = {
   checkSpacing: document.getElementById('check-spacing'),
   checkHashtags: document.getElementById('check-hashtags'),
   
+  btnViewLanding: document.getElementById('btn-view-landing'),
+  btnViewApp: document.getElementById('btn-view-app'),
+  landingHeroView: document.getElementById('landing-hero-view'),
+  appWorkspaceView: document.getElementById('app-workspace-view'),
+  btnHeroLaunch: document.getElementById('btn-hero-launch'),
+  btnBottomLaunch: document.getElementById('btn-bottom-launch'),
+
   tabBtnDashboard: document.getElementById('tab-btn-dashboard'),
   tabBtnPreview: document.getElementById('tab-btn-preview'),
   tabBtnDiff: document.getElementById('tab-btn-diff'),
@@ -1420,6 +1427,38 @@ function setupEventListeners() {
     toggleDrawer(false);
   });
   
+  // View Switcher & Landing CTAs
+  function switchViewMode(mode) {
+    if (mode === 'landing') {
+      dom.btnViewLanding.classList.add('active');
+      dom.btnViewApp.classList.remove('active');
+      dom.landingHeroView.classList.add('active');
+      dom.appWorkspaceView.classList.remove('active');
+    } else {
+      dom.btnViewApp.classList.add('active');
+      dom.btnViewLanding.classList.remove('active');
+      dom.appWorkspaceView.classList.add('active');
+      dom.landingHeroView.classList.remove('active');
+    }
+  }
+
+  dom.btnViewLanding.addEventListener('click', () => switchViewMode('landing'));
+  dom.btnViewApp.addEventListener('click', () => switchViewMode('app'));
+  if (dom.btnHeroLaunch) dom.btnHeroLaunch.addEventListener('click', () => switchViewMode('app'));
+  if (dom.btnBottomLaunch) dom.btnBottomLaunch.addEventListener('click', () => switchViewMode('app'));
+
+  // FAQ Accordion Toggle
+  document.querySelectorAll('.faq-question').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const answer = btn.nextElementSibling;
+      const icon = btn.querySelector('.faq-icon');
+      if (answer) {
+        answer.classList.toggle('open');
+        if (icon) icon.textContent = answer.classList.contains('open') ? '−' : '+';
+      }
+    });
+  });
+
   // Tab Navigation Listeners
   dom.tabBtnDashboard.addEventListener('click', () => switchTab('dashboard'));
   dom.tabBtnPreview.addEventListener('click', () => switchTab('preview'));
