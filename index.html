@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="CringeShield - Audit, de-cringe, and format high-impact LinkedIn posts without the typical AI buzzwords." />
     <title>CringeShield // LinkedIn Post Formatter & De-Cringer</title>
-    <script type="module" crossorigin src="./assets/index-DJD8IHd4.js"></script>
+    <script type="module" crossorigin src="./assets/index-CAFWb3UM.js"></script>
     <link rel="stylesheet" crossorigin href="./assets/index-D7bQxXD6.css">
   </head>
   <body>
@@ -645,10 +645,16 @@
                   <label for="carousel-watermark-input" class="form-label">Watermark / Handle</label>
                   <input type="text" id="carousel-watermark-input" class="drawer-input-cyber" style="padding: 0.4rem 0.6rem; font-size: 0.8rem;" value="@saurabhshidhore" />
                 </div>
-                <button id="btn-export-pdf" class="btn btn-primary" style="align-self: flex-end; padding: 0.5rem 0.85rem; font-size: 0.8rem;">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                  Export PDF
-                </button>
+                <div class="carousel-export-group" style="display: flex; gap: 0.4rem; align-self: flex-end;">
+                  <button id="btn-export-pdf" class="btn btn-primary" style="padding: 0.5rem 0.85rem; font-size: 0.8rem;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    Export PDF
+                  </button>
+                  <button id="btn-export-png" class="btn btn-secondary" style="padding: 0.5rem 0.85rem; font-size: 0.8rem; background: rgba(0, 245, 255, 0.1); border-color: rgba(0, 245, 255, 0.3); color: var(--color-cyber-cyan);" title="Export current slide as high-resolution PNG image">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                    Export PNG
+                  </button>
+                </div>
               </div>
 
               <!-- Interactive Slide Viewer Stage -->
