@@ -108,6 +108,7 @@ const dom = {
   carouselTitleInput: document.getElementById('carousel-title-input'),
   carouselWatermarkInput: document.getElementById('carousel-watermark-input'),
   btnExportPdf: document.getElementById('btn-export-pdf'),
+  btnExportPng: document.getElementById('btn-export-png'),
   btnPrevSlide: document.getElementById('btn-prev-slide'),
   btnNextSlide: document.getElementById('btn-next-slide'),
   carouselSlideIndicator: document.getElementById('carousel-slide-indicator'),
@@ -1124,6 +1125,37 @@ async function exportCarouselPdf() {
   renderCurrentSlide();
 }
 
+async function exportCurrentSlidePng() {
+  if (!carouselSlides || carouselSlides.length === 0) {
+    alert('No slide to export!');
+    return;
+  }
+  
+  const originalBtnContent = dom.btnExportPng.innerHTML;
+  dom.btnExportPng.innerHTML = '📷 Capturing...';
+  
+  try {
+    const canvas = await html2canvas(dom.carouselCardViewport, { scale: 3, useCORS: true });
+    const imgData = canvas.toDataURL('image/png');
+    
+    const dlLink = document.createElement('a');
+    const slideNum = currentSlideIndex + 1;
+    const totalSlides = carouselSlides.length;
+    dlLink.href = imgData;
+    dlLink.download = `cringeshield-slide-${slideNum}-of-${totalSlides}-${Date.now()}.png`;
+    dlLink.click();
+    
+    dom.btnExportPng.innerHTML = '✓ Saved PNG!';
+    setTimeout(() => {
+      dom.btnExportPng.innerHTML = originalBtnContent;
+    }, 2000);
+  } catch (err) {
+    console.error('PNG export error:', err);
+    alert('Failed to export PNG slide.');
+    dom.btnExportPng.innerHTML = originalBtnContent;
+  }
+}
+
 // ==========================================================================
 // 3. Viral Hook & CTA Vault Modal
 // ==========================================================================
@@ -1483,6 +1515,7 @@ function setupEventListeners() {
     }
   });
   dom.btnExportPdf.addEventListener('click', exportCarouselPdf);
+  if (dom.btnExportPng) dom.btnExportPng.addEventListener('click', exportCurrentSlidePng);
 
   // Hook Vault Controls
   dom.btnOpenHooks.addEventListener('click', () => toggleHooksModal(true));
