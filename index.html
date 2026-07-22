@@ -16,9 +16,17 @@
           <span class="shield-tagline">v2.0 • De-Cringer</span>
         </div>
         <div class="header-actions">
+          <button id="btn-open-hooks" class="btn" aria-label="Open Hook Vault">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
+            Hook & CTA Vault
+          </button>
+          <button id="btn-open-drafts" class="btn" aria-label="Open Drafts Manager">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+            Drafts (<span id="draft-count-badge">0</span>)
+          </button>
           <button id="btn-open-settings" class="btn" aria-label="Open Settings">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-            API & Profile Config
+            API Config
           </button>
         </div>
       </header>
@@ -76,8 +84,9 @@
           <!-- Stats Bar -->
           <div class="editor-stats-bar">
             <div class="stat-item">Words: <span id="stat-words">0</span></div>
-            <div class="stat-item">Characters: <span id="stat-chars">0</span>/3000</div>
-            <div class="stat-item">Read Time: <span id="stat-readtime">0</span>s</div>
+            <div class="stat-item">Chars: <span id="stat-chars">0</span>/3000</div>
+            <div class="stat-item">Read: <span id="stat-readtime">0</span>s</div>
+            <div class="stat-item">Grade: <span id="stat-read-grade" style="color: var(--color-cyber-green); font-weight: 700;">8.0 (Optimal)</span></div>
           </div>
 
           <!-- Config options -->
@@ -138,12 +147,20 @@
         <section class="glass-panel results-pane">
           <div class="tab-nav">
             <button id="tab-btn-dashboard" class="tab-btn active" data-tab="dashboard">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: text-bottom; margin-right: 0.25rem;"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
-              Cringe Analyzer
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: text-bottom; margin-right: 0.2rem;"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+              Analyzer
             </button>
             <button id="tab-btn-preview" class="tab-btn" data-tab="preview">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: text-bottom; margin-right: 0.25rem;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-              LinkedIn Preview
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: text-bottom; margin-right: 0.2rem;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+              Preview
+            </button>
+            <button id="tab-btn-diff" class="tab-btn" data-tab="diff">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: text-bottom; margin-right: 0.2rem;"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line><polyline points="8 21 3 21 3 16"></polyline><line x1="15" y1="15" x2="3" y2="21"></line></svg>
+              Before & After
+            </button>
+            <button id="tab-btn-carousel" class="tab-btn" data-tab="carousel">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: text-bottom; margin-right: 0.2rem;"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+              Carousel PDF
             </button>
           </div>
 
@@ -316,8 +333,119 @@
               </div>
             </div>
           </div>
+
+          <!-- Tab Content 3: Before & After Diff Visualizer -->
+          <div id="tab-content-diff" class="tab-content">
+            <div class="diff-view-container">
+              <div class="diff-header-banner">
+                <span class="diff-tag diff-tag-add">🟢 Added Value</span>
+                <span class="diff-tag diff-tag-del">🔴 Removed Buzzwords</span>
+                <span class="diff-tag diff-tag-mod">🔵 Structure & Spacing</span>
+              </div>
+              <div class="diff-split-grid">
+                <div class="diff-box">
+                  <div class="diff-box-title">Original Raw Draft</div>
+                  <div id="diff-original-content" class="diff-content-body">Paste a post and click "Shield Post" to analyze changes...</div>
+                </div>
+                <div class="diff-box">
+                  <div class="diff-box-title">De-Cringed Output</div>
+                  <div id="diff-formatted-content" class="diff-content-body">Shielded version highlights will show here...</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab Content 4: Carousel PDF Generator -->
+          <div id="tab-content-carousel" class="tab-content">
+            <div class="carousel-builder-view">
+              <div class="carousel-controls-bar">
+                <div class="form-group" style="margin-bottom: 0;">
+                  <label for="carousel-theme-select" class="form-label">Slide Theme</label>
+                  <select id="carousel-theme-select" class="select-cyber" style="padding: 0.4rem 0.6rem; font-size: 0.8rem;">
+                    <option value="cyber">Cyberpunk Dark (Neon)</option>
+                    <option value="minimal">Minimalist Light</option>
+                    <option value="blue">Electric Blue</option>
+                    <option value="emerald">Emerald Tech</option>
+                    <option value="sunset">Warm Sunset</option>
+                  </select>
+                </div>
+                <div class="form-group" style="margin-bottom: 0; flex: 1;">
+                  <label for="carousel-watermark-input" class="form-label">Watermark / Handle</label>
+                  <input type="text" id="carousel-watermark-input" class="drawer-input-cyber" style="padding: 0.4rem 0.6rem; font-size: 0.8rem;" value="@saurabhshidhore" />
+                </div>
+                <button id="btn-export-pdf" class="btn btn-primary" style="align-self: flex-end; padding: 0.5rem 0.85rem; font-size: 0.8rem;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                  Export PDF
+                </button>
+              </div>
+
+              <!-- Interactive Slide Viewer Stage -->
+              <div class="slide-stage-container">
+                <div class="slide-nav-bar">
+                  <button id="btn-prev-slide" class="btn-slide-nav">◄ Prev</button>
+                  <span id="carousel-slide-indicator" class="slide-indicator-text">Slide 1 of 1</span>
+                  <button id="btn-next-slide" class="btn-slide-nav">Next ►</button>
+                </div>
+
+                <div id="carousel-card-viewport" class="carousel-card theme-cyber">
+                  <div class="carousel-card-header">
+                    <div class="carousel-card-brand" id="carousel-display-brand">CringeShield</div>
+                    <div class="carousel-card-counter" id="carousel-display-counter">1/4</div>
+                  </div>
+                  <div class="carousel-card-body" id="carousel-display-text">
+                    Your slide content will render here...
+                  </div>
+                  <div class="carousel-card-footer">
+                    <span id="carousel-display-watermark">@saurabhshidhore</span>
+                    <span class="carousel-swipe-prompt">Swipe ➔</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </section>
       </main>
+
+      <!-- Hook & CTA Vault Modal -->
+      <div id="hooks-modal-overlay" class="modal-overlay"></div>
+      <div id="hooks-modal" class="modal-card">
+        <div class="modal-header">
+          <div class="modal-title">⚡ Viral Hook & CTA Vault</div>
+          <button id="btn-close-hooks" class="modal-close">×</button>
+        </div>
+        <div class="modal-body">
+          <div class="vault-tabs">
+            <button class="vault-tab-btn active" data-vcat="curiosity">🔥 Curiosity</button>
+            <button class="vault-tab-btn" data-vcat="data">📊 Data Insights</button>
+            <button class="vault-tab-btn" data-vcat="contrarian">⚡ Contrarian</button>
+            <button class="vault-tab-btn" data-vcat="story">🚀 Story Starters</button>
+            <button class="vault-tab-btn" data-vcat="cta">🎯 High-Converting CTAs</button>
+          </div>
+          <div class="vault-search-row">
+            <input type="text" id="vault-search-input" class="drawer-input-cyber" placeholder="Search templates (e.g. product, roadmap, metrics...)" />
+          </div>
+          <div id="vault-items-container" class="vault-items-list">
+            <!-- Dynamic Vault Items -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Drafts Manager Drawer -->
+      <div id="drafts-drawer-overlay" class="modal-overlay"></div>
+      <div id="drafts-drawer" class="settings-drawer">
+        <div class="settings-drawer-header">
+          <div class="settings-drawer-title">📁 Workspace Drafts</div>
+          <button id="btn-close-drafts" class="settings-drawer-close">×</button>
+        </div>
+        <div style="display: flex; gap: 0.5rem;">
+          <button id="btn-new-draft" class="btn" style="flex: 1; font-size: 0.75rem; padding: 0.4rem;">➕ New</button>
+          <button id="btn-save-draft" class="btn btn-primary" style="flex: 1; font-size: 0.75rem; padding: 0.4rem;">💾 Save Current</button>
+          <button id="btn-export-drafts" class="btn" style="font-size: 0.75rem; padding: 0.4rem;">📤 Export</button>
+        </div>
+        <div id="drafts-list-container" style="display: flex; flex-direction: column; gap: 0.65rem; overflow-y: auto; flex: 1; margin-top: 0.5rem;">
+          <!-- Dynamic Draft Items -->
+        </div>
+      </div>
 
       <!-- Slide out configuration drawer -->
       <div id="settings-overlay" class="settings-overlay"></div>

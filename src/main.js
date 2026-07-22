@@ -1,4 +1,6 @@
 import './style.css';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 // DOM Element Selections
 const dom = {
@@ -15,8 +17,13 @@ const dom = {
   
   tabBtnDashboard: document.getElementById('tab-btn-dashboard'),
   tabBtnPreview: document.getElementById('tab-btn-preview'),
+  tabBtnDiff: document.getElementById('tab-btn-diff'),
+  tabBtnCarousel: document.getElementById('tab-btn-carousel'),
+  
   tabContentDashboard: document.getElementById('tab-content-dashboard'),
   tabContentPreview: document.getElementById('tab-content-preview'),
+  tabContentDiff: document.getElementById('tab-content-diff'),
+  tabContentCarousel: document.getElementById('tab-content-carousel'),
   
   previewAvatar: document.getElementById('preview-avatar'),
   previewName: document.getElementById('preview-name'),
@@ -70,6 +77,7 @@ const dom = {
   statWords: document.getElementById('stat-words'),
   statChars: document.getElementById('stat-chars'),
   statReadtime: document.getElementById('stat-readtime'),
+  statReadGrade: document.getElementById('stat-read-grade'),
   
   // Quick format toolbar buttons
   btnToolSpace: document.getElementById('btn-tool-space'),
@@ -79,7 +87,43 @@ const dom = {
   
   // Interactive preview buttons
   btnPreviewLike: document.getElementById('btn-preview-like'),
-  previewLikesCount: document.getElementById('preview-likes-count')
+  previewLikesCount: document.getElementById('preview-likes-count'),
+
+  // Diff Elements
+  diffOriginalContent: document.getElementById('diff-original-content'),
+  diffFormattedContent: document.getElementById('diff-formatted-content'),
+
+  // Carousel Elements
+  carouselThemeSelect: document.getElementById('carousel-theme-select'),
+  carouselWatermarkInput: document.getElementById('carousel-watermark-input'),
+  btnExportPdf: document.getElementById('btn-export-pdf'),
+  btnPrevSlide: document.getElementById('btn-prev-slide'),
+  btnNextSlide: document.getElementById('btn-next-slide'),
+  carouselSlideIndicator: document.getElementById('carousel-slide-indicator'),
+  carouselCardViewport: document.getElementById('carousel-card-viewport'),
+  carouselDisplayBrand: document.getElementById('carousel-display-brand'),
+  carouselDisplayCounter: document.getElementById('carousel-display-counter'),
+  carouselDisplayText: document.getElementById('carousel-display-text'),
+  carouselDisplayWatermark: document.getElementById('carousel-display-watermark'),
+
+  // Vault Modal Elements
+  btnOpenHooks: document.getElementById('btn-open-hooks'),
+  btnCloseHooks: document.getElementById('btn-close-hooks'),
+  hooksModal: document.getElementById('hooks-modal'),
+  hooksModalOverlay: document.getElementById('hooks-modal-overlay'),
+  vaultItemsContainer: document.getElementById('vault-items-container'),
+  vaultSearchInput: document.getElementById('vault-search-input'),
+
+  // Drafts Drawer Elements
+  btnOpenDrafts: document.getElementById('btn-open-drafts'),
+  btnCloseDrafts: document.getElementById('btn-close-drafts'),
+  draftsDrawer: document.getElementById('drafts-drawer'),
+  draftsDrawerOverlay: document.getElementById('drafts-drawer-overlay'),
+  btnNewDraft: document.getElementById('btn-new-draft'),
+  btnSaveDraft: document.getElementById('btn-save-draft'),
+  btnExportDrafts: document.getElementById('btn-export-drafts'),
+  draftsListContainer: document.getElementById('drafts-list-container'),
+  draftCountBadge: document.getElementById('draft-count-badge')
 };
 
 // Preset Templates Library
@@ -404,17 +448,66 @@ function toggleDrawer(open) {
 }
 
 function switchTab(tabId) {
-  if (tabId === 'dashboard') {
-    dom.tabBtnDashboard.classList.add('active');
-    dom.tabBtnPreview.classList.remove('active');
-    dom.tabContentDashboard.classList.add('active');
-    dom.tabContentPreview.classList.remove('active');
-  } else {
-    dom.tabBtnDashboard.classList.remove('active');
-    dom.tabBtnPreview.classList.add('active');
-    dom.tabContentDashboard.classList.remove('active');
-    dom.tabContentPreview.classList.add('active');
+  const tabs = ['dashboard', 'preview', 'diff', 'carousel'];
+  tabs.forEach(t => {
+    const btn = dom[`tabBtn${t.charAt(0).toUpperCase() + t.slice(1)}`];
+    const content = dom[`tabContent${t.charAt(0).toUpperCase() + t.slice(1)}`];
+    if (btn && content) {
+      if (t === tabId) {
+        btn.classList.add('active');
+        content.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+        content.classList.remove('active');
+      }
+    }
+  });
+
+  if (tabId === 'diff') {
+    renderDiffView(dom.rawInput.value, state.formattedPost || dom.rawInput.value);
+  } else if (tabId === 'carousel') {
+    updateCarouselSlides(state.formattedPost || dom.rawInput.value);
   }
+}
+
+// Syllable Counter Helper for Flesch-Kincaid
+function countSyllables(word) {
+  word = word.toLowerCase().trim();
+  if (word.length <= 3) return 1;
+  word = word.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, '');
+  word = word.replace(/^y/, '');
+  const syllables = word.match(/[aeiouy]{1,2}/g);
+  return syllables ? syllables.length : 1;
+}
+
+// Flesch-Kincaid Grade Calculator
+function calculateReadability(text) {
+  if (!text || text.trim() === '') return { grade: '8.0', status: 'Optimal', color: 'var(--color-cyber-green)' };
+  const words = text.trim().split(/\s+/).filter(w => w.length > 0);
+  if (words.length === 0) return { grade: '8.0', status: 'Optimal', color: 'var(--color-cyber-green)' };
+  
+  const sentences = text.split(/[.!?]+\s+/).filter(s => s.trim().length > 0);
+  const sentenceCount = Math.max(sentences.length, 1);
+  
+  let totalSyllables = 0;
+  words.forEach(w => {
+    totalSyllables += countSyllables(w);
+  });
+  
+  const grade = (0.39 * (words.length / sentenceCount)) + (11.8 * (totalSyllables / words.length)) - 15.59;
+  const roundedGrade = Math.max(1, Math.min(18, Math.round(grade * 10) / 10));
+  
+  let status = 'Optimal';
+  let color = 'var(--color-cyber-green)';
+  if (roundedGrade > 12) {
+    status = 'Academic';
+    color = 'var(--color-cyber-orange)';
+  } else if (roundedGrade > 15) {
+    status = 'Dense';
+    color = 'var(--color-cyber-pink)';
+  }
+  
+  return { grade: roundedGrade.toFixed(1), status, color };
 }
 
 // Stats & Telemetry Calculator
@@ -425,10 +518,13 @@ function calculateStats(text) {
   
   // Assume average reading speed of 200 WPM
   const readTimeSeconds = Math.ceil((wordCount / 200) * 60);
+  const readability = calculateReadability(text);
   
   dom.statWords.textContent = wordCount;
   dom.statChars.textContent = charCount;
   dom.statReadtime.textContent = charCount > 0 ? readTimeSeconds : 0;
+  dom.statReadGrade.textContent = `${readability.grade} (${readability.status})`;
+  dom.statReadGrade.style.color = readability.color;
   
   if (charCount > 3000) {
     dom.statChars.style.color = 'var(--color-cyber-pink)';
@@ -895,6 +991,297 @@ async function refactorPost() {
   }
 }
 
+// ==========================================================================
+// 1. Diff Visualizer Engine
+// ==========================================================================
+function escapeHtml(str) {
+  if (!str) return '';
+  return str.replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+}
+
+function renderDiffView(originalText, formattedText) {
+  if (!originalText || originalText.trim() === '') {
+    dom.diffOriginalContent.textContent = 'Paste a draft and click "Shield Post" to analyze changes...';
+    dom.diffFormattedContent.textContent = 'Shielded version highlights will show here...';
+    return;
+  }
+  
+  const origWords = originalText.trim().split(/\s+/);
+  const formWords = (formattedText || originalText).trim().split(/\s+/);
+  
+  // Flag deleted buzzwords/cringe in original text
+  let origMarkup = '';
+  origWords.forEach(w => {
+    const clean = w.toLowerCase().replace(/[^a-z0-9]/g, '');
+    if (BUZZWORDS.includes(clean)) {
+      origMarkup += `<span class="diff-del-word">${escapeHtml(w)}</span> `;
+    } else {
+      origMarkup += `${escapeHtml(w)} `;
+    }
+  });
+  
+  // Flag newly added phrases in formatted output
+  const origWordSet = new Set(origWords.map(w => w.toLowerCase()));
+  let formMarkup = '';
+  formWords.forEach(w => {
+    const clean = w.toLowerCase();
+    if (!origWordSet.has(clean) && clean.length > 2) {
+      formMarkup += `<span class="diff-add-word">${escapeHtml(w)}</span> `;
+    } else {
+      formMarkup += `${escapeHtml(w)} `;
+    }
+  });
+  
+  dom.diffOriginalContent.innerHTML = origMarkup;
+  dom.diffFormattedContent.innerHTML = formMarkup;
+}
+
+// ==========================================================================
+// 2. 1-Click PDF Carousel Generator
+// ==========================================================================
+let currentSlideIndex = 0;
+let carouselSlides = [];
+
+function updateCarouselSlides(text) {
+  if (!text || text.trim() === '') {
+    carouselSlides = ["Your shielded post content will split into carousel slides here..."];
+  } else {
+    const paragraphs = text.trim().split(/\n\n+/).filter(p => p.trim().length > 0);
+    carouselSlides = paragraphs.length > 1 ? paragraphs : [text];
+  }
+  currentSlideIndex = 0;
+  renderCurrentSlide();
+}
+
+function renderCurrentSlide() {
+  const total = carouselSlides.length;
+  if (currentSlideIndex >= total) currentSlideIndex = total - 1;
+  if (currentSlideIndex < 0) currentSlideIndex = 0;
+  
+  dom.carouselDisplayCounter.textContent = `${currentSlideIndex + 1}/${total}`;
+  dom.carouselSlideIndicator.textContent = `Slide ${currentSlideIndex + 1} of ${total}`;
+  dom.carouselDisplayText.textContent = carouselSlides[currentSlideIndex] || '';
+  dom.carouselDisplayWatermark.textContent = dom.carouselWatermarkInput.value || '@saurabhshidhore';
+  
+  const theme = dom.carouselThemeSelect.value;
+  dom.carouselCardViewport.className = `carousel-card theme-${theme}`;
+}
+
+async function exportCarouselPdf() {
+  if (!carouselSlides || carouselSlides.length === 0) {
+    alert('No slides to export!');
+    return;
+  }
+  
+  const pdf = new jsPDF({
+    orientation: 'portrait',
+    unit: 'px',
+    format: [320, 400]
+  });
+  
+  const originalIndex = currentSlideIndex;
+  
+  for (let i = 0; i < carouselSlides.length; i++) {
+    currentSlideIndex = i;
+    renderCurrentSlide();
+    await new Promise(resolve => setTimeout(resolve, 60));
+    
+    const canvas = await html2canvas(dom.carouselCardViewport, { scale: 2 });
+    const imgData = canvas.toDataURL('image/jpeg', 0.95);
+    
+    if (i > 0) pdf.addPage([320, 400], 'portrait');
+    pdf.addImage(imgData, 'JPEG', 0, 0, 320, 400);
+  }
+  
+  pdf.save(`cringeshield-carousel-${Date.now()}.pdf`);
+  currentSlideIndex = originalIndex;
+  renderCurrentSlide();
+}
+
+// ==========================================================================
+// 3. Viral Hook & CTA Vault Modal
+// ==========================================================================
+const HOOK_VAULT = {
+  curiosity: [
+    "Most teams celebrate feature launches. Here is why we track the features users abandon...",
+    "I spent 30 days auditing our team's meeting frequency. Here are 3 brutal truths:",
+    "Stop telling your audience what your product does. Start showing them what it eliminates.",
+    "90% of SaaS products fail not because of tech, but because of this silent UX killer:",
+    "We cut our sprint backlog in half last week. The secret was surprisingly simple:"
+  ],
+  data: [
+    "We analyzed 500+ user onboardings. Here are the 3 metrics that actually predict retention:",
+    "80% of feature requests come from your 5% loudest users. Here is how we filter signal from noise:",
+    "Our team tested 4 different sprint frameworks. Here is the exact data on what worked:",
+    "The average developer loses 2.5 hours a day to context switching. Here is our mitigation plan:"
+  ],
+  contrarian: [
+    "Unpopular opinion: Daily standups are usually a sign of bad async communication.",
+    "Stop optimizing for velocity. Optimize for feature adoption.",
+    "Your product roadmap shouldn't be a list of features—it should be a list of problems to solve.",
+    "Adding AI to your product won't fix a broken core user flow."
+  ],
+  story: [
+    "3 years ago, we shipped a feature that zero users asked for. Here is what happened:",
+    "Last month, I made a $10,000 architectural mistake. Here is what it taught me about system design:",
+    "When we launched our first MVP, nobody signed up. Here is how we pivoted:"
+  ],
+  cta: [
+    "What is your team's biggest operational bottleneck this quarter? Drop your thoughts below 👇",
+    "How does your team handle feature adoption tracking? Let's discuss in the comments.",
+    "If you found this breakdown useful, repost it to help another builder in your network 🔄",
+    "Want our full product spec template? Comment 'SPEC' and I'll send it directly to your DMs."
+  ]
+};
+
+let currentVaultCategory = 'curiosity';
+
+function toggleHooksModal(open) {
+  if (open) {
+    dom.hooksModal.classList.add('open');
+    dom.hooksModalOverlay.classList.add('open');
+    renderVaultItems();
+  } else {
+    dom.hooksModal.classList.remove('open');
+    dom.hooksModalOverlay.classList.remove('open');
+  }
+}
+
+function renderVaultItems() {
+  const items = HOOK_VAULT[currentVaultCategory] || [];
+  const query = (dom.vaultSearchInput.value || '').toLowerCase().trim();
+  const filtered = items.filter(item => item.toLowerCase().includes(query));
+  
+  if (filtered.length === 0) {
+    dom.vaultItemsContainer.innerHTML = '<div style="color: var(--color-text-secondary); font-size: 0.8rem; padding: 1rem; text-align: center;">No matching hook templates found.</div>';
+    return;
+  }
+  
+  dom.vaultItemsContainer.innerHTML = filtered.map(item => `
+    <div class="vault-card">
+      <div class="vault-card-text">${escapeHtml(item)}</div>
+      <button class="btn-use-vault" data-text="${escapeHtml(item)}">Insert Hook</button>
+    </div>
+  `).join('');
+  
+  dom.vaultItemsContainer.querySelectorAll('.btn-use-vault').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const hookText = btn.getAttribute('data-text');
+      if (hookText) {
+        const currentVal = dom.rawInput.value;
+        dom.rawInput.value = hookText + '\n\n' + currentVal;
+        dom.rawInput.dispatchEvent(new Event('input'));
+        toggleHooksModal(false);
+      }
+    });
+  });
+}
+
+// ==========================================================================
+// 4. Local Workspace Drafts Manager
+// ==========================================================================
+function getDrafts() {
+  try {
+    return JSON.parse(localStorage.getItem('cs_workspace_drafts') || '[]');
+  } catch(e) {
+    return [];
+  }
+}
+
+function saveDrafts(drafts) {
+  localStorage.setItem('cs_workspace_drafts', JSON.stringify(drafts));
+  updateDraftCountBadge();
+}
+
+function updateDraftCountBadge() {
+  const count = getDrafts().length;
+  dom.draftCountBadge.textContent = count;
+}
+
+function toggleDraftsDrawer(open) {
+  if (open) {
+    dom.draftsDrawer.classList.add('open');
+    dom.draftsDrawerOverlay.classList.add('open');
+    renderDraftsList();
+  } else {
+    dom.draftsDrawer.classList.remove('open');
+    dom.draftsDrawerOverlay.classList.remove('open');
+  }
+}
+
+function saveCurrentDraft() {
+  const text = dom.rawInput.value;
+  if (!text || text.trim() === '') {
+    alert('Cannot save an empty draft!');
+    return;
+  }
+  const drafts = getDrafts();
+  const newDraft = {
+    id: 'draft_' + Date.now(),
+    text: text,
+    formatted: state.formattedPost || '',
+    title: text.trim().substring(0, 32) + '...',
+    updatedAt: new Date().toLocaleDateString()
+  };
+  drafts.unshift(newDraft);
+  saveDrafts(drafts);
+  renderDraftsList();
+  alert('Draft saved to local workspace!');
+}
+
+function exportAllDrafts() {
+  const drafts = getDrafts();
+  const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(drafts, null, 2));
+  const dlAnchorElem = document.createElement('a');
+  dlAnchorElem.setAttribute("href", dataStr);
+  dlAnchorElem.setAttribute("download", `cringeshield_drafts_${Date.now()}.json`);
+  dlAnchorElem.click();
+}
+
+function renderDraftsList() {
+  const drafts = getDrafts();
+  updateDraftCountBadge();
+  if (drafts.length === 0) {
+    dom.draftsListContainer.innerHTML = '<div style="color: var(--color-text-secondary); font-size: 0.8rem; text-align: center; padding: 1.5rem;">No saved drafts yet. Click "Save Current" to add one.</div>';
+    return;
+  }
+  
+  dom.draftsListContainer.innerHTML = drafts.map(d => `
+    <div class="draft-card" data-id="${d.id}">
+      <div class="draft-card-header">
+        <div class="draft-title">${escapeHtml(d.title)}</div>
+        <div class="draft-actions">
+          <button class="btn-draft-action btn-load-draft" data-id="${d.id}">Load</button>
+          <button class="btn-draft-action btn-del-draft" data-id="${d.id}">Del</button>
+        </div>
+      </div>
+      <div style="font-size: 0.7rem; color: var(--color-text-secondary);">${d.updatedAt} • ${d.text.length} chars</div>
+    </div>
+  `).join('');
+  
+  dom.draftsListContainer.querySelectorAll('.btn-load-draft').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.getAttribute('data-id');
+      const found = getDrafts().find(item => item.id === id);
+      if (found) {
+        dom.rawInput.value = found.text;
+        state.formattedPost = found.formatted;
+        dom.rawInput.dispatchEvent(new Event('input'));
+        toggleDraftsDrawer(false);
+      }
+    });
+  });
+
+  dom.draftsListContainer.querySelectorAll('.btn-del-draft').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.getAttribute('data-id');
+      const filtered = getDrafts().filter(item => item.id !== id);
+      saveDrafts(filtered);
+      renderDraftsList();
+    });
+  });
+}
+
 // Copy Post
 function setupCopyHandler() {
   dom.btnCopyPost.addEventListener('click', () => {
@@ -927,7 +1314,6 @@ function setupCopyHandler() {
 
 // Quick Toolbar Setup
 function setupToolbarHandlers() {
-  // 1. Auto-Space
   dom.btnToolSpace.addEventListener('click', () => {
     const txt = dom.rawInput.value;
     if (txt) {
@@ -936,7 +1322,6 @@ function setupToolbarHandlers() {
     }
   });
 
-  // 2. Clean Lists
   dom.btnToolLists.addEventListener('click', () => {
     const txt = dom.rawInput.value;
     if (txt) {
@@ -945,7 +1330,6 @@ function setupToolbarHandlers() {
     }
   });
 
-  // 3. De-Buzz
   dom.btnToolDebuzz.addEventListener('click', () => {
     const txt = dom.rawInput.value;
     if (txt) {
@@ -954,7 +1338,6 @@ function setupToolbarHandlers() {
     }
   });
 
-  // 4. Clear
   dom.btnToolClear.addEventListener('click', () => {
     dom.rawInput.value = '';
     dom.rawInput.dispatchEvent(new Event('input'));
@@ -1005,13 +1388,65 @@ function setupEventListeners() {
     toggleDrawer(false);
   });
   
+  // Tab Navigation Listeners
   dom.tabBtnDashboard.addEventListener('click', () => switchTab('dashboard'));
   dom.tabBtnPreview.addEventListener('click', () => switchTab('preview'));
+  dom.tabBtnDiff.addEventListener('click', () => switchTab('diff'));
+  dom.tabBtnCarousel.addEventListener('click', () => switchTab('carousel'));
+
+  // Carousel Controls
+  dom.carouselThemeSelect.addEventListener('change', renderCurrentSlide);
+  dom.carouselWatermarkInput.addEventListener('input', renderCurrentSlide);
+  dom.btnPrevSlide.addEventListener('click', () => {
+    if (currentSlideIndex > 0) {
+      currentSlideIndex--;
+      renderCurrentSlide();
+    }
+  });
+  dom.btnNextSlide.addEventListener('click', () => {
+    if (currentSlideIndex < carouselSlides.length - 1) {
+      currentSlideIndex++;
+      renderCurrentSlide();
+    }
+  });
+  dom.btnExportPdf.addEventListener('click', exportCarouselPdf);
+
+  // Hook Vault Controls
+  dom.btnOpenHooks.addEventListener('click', () => toggleHooksModal(true));
+  dom.btnCloseHooks.addEventListener('click', () => toggleHooksModal(false));
+  dom.hooksModalOverlay.addEventListener('click', () => toggleHooksModal(false));
   
+  document.querySelectorAll('.vault-tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.vault-tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentVaultCategory = btn.getAttribute('data-vcat');
+      renderVaultItems();
+    });
+  });
+  
+  dom.vaultSearchInput.addEventListener('input', renderVaultItems);
+
+  // Drafts Drawer Controls
+  dom.btnOpenDrafts.addEventListener('click', () => toggleDraftsDrawer(true));
+  dom.btnCloseDrafts.addEventListener('click', () => toggleDraftsDrawer(false));
+  dom.draftsDrawerOverlay.addEventListener('click', () => toggleDraftsDrawer(false));
+  dom.btnNewDraft.addEventListener('click', () => {
+    dom.rawInput.value = '';
+    state.formattedPost = '';
+    dom.rawInput.dispatchEvent(new Event('input'));
+    toggleDraftsDrawer(false);
+  });
+  dom.btnSaveDraft.addEventListener('click', saveCurrentDraft);
+  dom.btnExportDrafts.addEventListener('click', exportAllDrafts);
+
+  // Live input handler with auto-save & diff update
   dom.rawInput.addEventListener('input', () => {
     const text = dom.rawInput.value;
     calculateStats(text);
     analyzeCringe(text);
+    renderDiffView(text, state.formattedPost || text);
+    updateCarouselSlides(state.formattedPost || text);
   });
 
   document.querySelectorAll('.chip').forEach(chip => {
@@ -1045,7 +1480,8 @@ function init() {
   setupEventListeners();
   calculateStats('');
   analyzeCringe(''); // Initial gauge setup
-  console.log('CringeShield 2.0 Engine & Telemetry Initialized!');
+  updateDraftCountBadge();
+  console.log('CringeShield 2.0 Ultimate Engine Initialized!');
 }
 
 document.addEventListener('DOMContentLoaded', init);
