@@ -1,0 +1,517 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%22 width=%22100%22 height=%22100%22><text y=%220.9em%22 font-size=%2290%22>🛡️</text></svg>" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="CringeShield - Audit, de-cringe, and format high-impact LinkedIn posts without the typical AI buzzwords." />
+    <title>CringeShield // LinkedIn Post Formatter & De-Cringer</title>
+    <script type="module" crossorigin src="./assets/index--z0yQV_N.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-DdUMlrwm.css">
+  </head>
+  <body>
+    <div id="app">
+      <!-- Header -->
+      <header class="glass-panel">
+        <div class="logo-container">
+          <div class="shield-logo">CringeShield</div>
+          <span class="shield-tagline">v2.0 • De-Cringer</span>
+        </div>
+        <div class="header-actions">
+          <button id="btn-open-hooks" class="btn" aria-label="Open Hook Vault">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
+            Hook & CTA Vault
+          </button>
+          <button id="btn-open-drafts" class="btn" aria-label="Open Drafts Manager">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+            Drafts (<span id="draft-count-badge">0</span>)
+          </button>
+          <button id="btn-open-settings" class="btn" aria-label="Open Settings">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            API Config
+          </button>
+        </div>
+      </header>
+
+      <!-- Dashboard Grid -->
+      <main class="dashboard-grid">
+        
+        <!-- Left Pane: The Editor & Controls -->
+        <section class="glass-panel editor-pane" style="position: relative;">
+          <!-- Loader Overlay for AI refactoring -->
+          <div id="loader-overlay" class="loader-overlay">
+            <div class="cyber-spinner"></div>
+            <div class="loader-text">Shielding Post...</div>
+          </div>
+
+          <div class="pane-title">
+            <span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+              Post Editor
+            </span>
+          </div>
+
+          <!-- Preset Templates Chips -->
+          <div class="form-label" style="margin-bottom: 0.5rem;">Quick Start Templates</div>
+          <div class="preset-chips-container">
+            <button class="chip" data-preset="meeting">Meeting Sync</button>
+            <button class="chip" data-preset="spec">Technical Spec</button>
+            <button class="chip" data-preset="rejected">Job Rejection</button>
+            <button class="chip" data-preset="launch">Generic AI Launch</button>
+          </div>
+
+          <!-- Editor Toolbar Controls -->
+          <div class="editor-toolbar">
+            <div class="toolbar-group">
+              <button id="btn-tool-space" class="btn-tool" title="Format paragraphs for mobile spacing">
+                ⚡ Auto-Space
+              </button>
+              <button id="btn-tool-lists" class="btn-tool" title="Strip hyphens and convert to clean bullets">
+                🔗 Clean Lists
+              </button>
+              <button id="btn-tool-debuzz" class="btn-tool" title="Replace AI buzzwords locally">
+                ❌ De-Buzz
+              </button>
+              <button id="btn-tool-vault" class="btn-tool" title="Open Viral Hook Vault">
+                💡 Hooks
+              </button>
+            </div>
+            <button id="btn-tool-clear" class="btn-tool btn-tool-clear" title="Clear text editor">
+              🗑️ Clear
+            </button>
+          </div>
+
+          <!-- Textarea Input -->
+          <div class="text-input-wrapper">
+            <textarea id="raw-post-input" class="textarea-cyber" placeholder="Paste your rough thought, robotic AI draft, or raw bullet points here..."></textarea>
+          </div>
+
+          <!-- Stats Bar -->
+          <div class="editor-stats-bar">
+            <div class="stat-item">Words: <span id="stat-words">0</span></div>
+            <div class="stat-item">Chars: <span id="stat-chars">0</span>/3000</div>
+            <div class="stat-item">Read: <span id="stat-readtime">0</span>s</div>
+            <div class="stat-item">Grade: <span id="stat-read-grade" style="color: var(--color-cyber-green); font-weight: 700;">8.0 (Optimal)</span></div>
+          </div>
+
+          <!-- Config options -->
+          <div class="config-grid">
+            <div class="form-group">
+              <label for="select-formula" class="form-label">Copywriting Formula</label>
+              <select id="select-formula" class="select-cyber">
+                <option value="hook-value-cta">Hook - Value - Call To Action</option>
+                <option value="pas">PAS (Problem - Agitate - Solve)</option>
+                <option value="aida">AIDA (Attention - Interest - Desire - Action)</option>
+                <option value="contrarian">Contrarian PM Take</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="select-tone" class="form-label">Persona / Tone</label>
+              <select id="select-tone" class="select-cyber">
+                <option value="pragmatic">The Pragmatic Builder</option>
+                <option value="storyteller">The Startup Storyteller</option>
+                <option value="critic">The Data-Driven Critic</option>
+                <option value="thoughtleader">Thought Leader (De-Cringed)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Constraints checklist -->
+          <div class="form-label" style="margin-bottom: 0.5rem;">Sanitation Constraints</div>
+          <div class="constraint-options">
+            <label class="checkbox-container">
+              <input type="checkbox" id="check-buzzwords" checked />
+              <span class="custom-checkbox"></span>
+              <span>Filter AI Buzzwords</span>
+            </label>
+            <label class="checkbox-container">
+              <input type="checkbox" id="check-hyphens" checked />
+              <span class="custom-checkbox"></span>
+              <span>Zero Hyphens (Clean lists)</span>
+            </label>
+            <label class="checkbox-container">
+              <input type="checkbox" id="check-spacing" checked />
+              <span class="custom-checkbox"></span>
+              <span>Double-spaced (Mobile)</span>
+            </label>
+            <label class="checkbox-container">
+              <input type="checkbox" id="check-hashtags" checked />
+              <span class="custom-checkbox"></span>
+              <span>Limit Hashtags (3-4 bottom)</span>
+            </label>
+          </div>
+
+          <!-- Trigger Button -->
+          <button id="btn-shield-post" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 0.85rem;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            Shield Post
+          </button>
+        </section>
+
+        <!-- Right Pane: Results & Preview -->
+        <section class="glass-panel results-pane">
+          <div class="tab-nav">
+            <button id="tab-btn-dashboard" class="tab-btn active" data-tab="dashboard">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: text-bottom; margin-right: 0.2rem;"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+              Analyzer
+            </button>
+            <button id="tab-btn-preview" class="tab-btn" data-tab="preview">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: text-bottom; margin-right: 0.2rem;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+              Preview
+            </button>
+            <button id="tab-btn-diff" class="tab-btn" data-tab="diff">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: text-bottom; margin-right: 0.2rem;"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line><polyline points="8 21 3 21 3 16"></polyline><line x1="15" y1="15" x2="3" y2="21"></line></svg>
+              Before & After
+            </button>
+            <button id="tab-btn-carousel" class="tab-btn" data-tab="carousel">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: text-bottom; margin-right: 0.2rem;"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+              Carousel PDF
+            </button>
+          </div>
+
+          <!-- Tab Content 1: Diagnostics & Gauge -->
+          <div id="tab-content-dashboard" class="tab-content active">
+            <div class="cringe-dashboard-view">
+              <!-- Radial Meter Gauge -->
+              <div class="cringe-gauge-container">
+                <svg class="cringe-gauge-svg" width="170" height="170" viewBox="0 0 180 180">
+                  <circle class="cringe-gauge-bg" cx="90" cy="90" r="70"></circle>
+                  <circle id="cringe-gauge-circle" class="cringe-gauge-progress" cx="90" cy="90" r="70"></circle>
+                </svg>
+                <div class="cringe-score-display">
+                  <div id="cringe-score-num" class="cringe-score-num">0%</div>
+                  <div class="cringe-score-lbl">Cringe Score</div>
+                  <div id="cringe-score-verdict" class="cringe-score-verdict" style="color: var(--color-cyber-green)">Clean</div>
+                </div>
+              </div>
+
+              <!-- Telemetry breakdown metrics bars -->
+              <div class="metrics-breakdown-box">
+                <div class="metric-bar-group">
+                  <div class="metric-bar-header">
+                    <span>AI Buzzword Level</span>
+                    <span id="val-buzzwords" class="metric-val">0%</span>
+                  </div>
+                  <div class="metric-bar-track">
+                    <div id="fill-buzzwords" class="metric-bar-fill"></div>
+                  </div>
+                </div>
+
+                <div class="metric-bar-group">
+                  <div class="metric-bar-header">
+                    <span>Broetry Spacing Score</span>
+                    <span id="val-broetry" class="metric-val">0%</span>
+                  </div>
+                  <div class="metric-bar-track">
+                    <div id="fill-broetry" class="metric-bar-fill"></div>
+                  </div>
+                </div>
+
+                <div class="metric-bar-group">
+                  <div class="metric-bar-header">
+                    <span>Emoji & Clutter Density</span>
+                    <span id="val-emoji" class="metric-val">0%</span>
+                  </div>
+                  <div class="metric-bar-track">
+                    <div id="fill-emoji" class="metric-bar-fill"></div>
+                  </div>
+                </div>
+
+                <div class="metric-bar-group">
+                  <div class="metric-bar-header">
+                    <span>Accessibility & Spacing</span>
+                    <span id="val-a11y" class="metric-val">0%</span>
+                  </div>
+                  <div class="metric-bar-track">
+                    <div id="fill-a11y" class="metric-bar-fill"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Critique Checklist Cards -->
+              <div class="critique-summary-label">Audit Diagnostics Log</div>
+              <div class="critique-container">
+                <!-- Card 1: Buzzwords -->
+                <div class="critique-card">
+                  <div id="critique-icon-buzzwords" class="critique-icon pass">✓</div>
+                  <div class="critique-details">
+                    <div class="critique-heading">AI Buzzwords & Jargon</div>
+                    <div id="critique-desc-buzzwords" class="critique-description">No generic buzzwords detected. Clean draft.</div>
+                    <div id="critique-buzzwords-highlight" class="critique-buzzwords-highlight"></div>
+                  </div>
+                </div>
+                
+                <!-- Card 2: Broetry Spacing -->
+                <div class="critique-card">
+                  <div id="critique-icon-broetry" class="critique-icon pass">✓</div>
+                  <div class="critique-details">
+                    <div class="critique-heading">Line Spacing & "Broetry" Density</div>
+                    <div id="critique-desc-broetry" class="critique-description">Excellent readability. Sentence structures look organic.</div>
+                  </div>
+                </div>
+
+                <!-- Card 3: Emojis & Formatting -->
+                <div class="critique-card">
+                  <div id="critique-icon-formatting" class="critique-icon pass">✓</div>
+                  <div class="critique-details">
+                    <div class="critique-heading">Formatting & Emojis</div>
+                    <div id="critique-desc-formatting" class="critique-description">Normal emoji density and clean spacing tags. No accessibility issues.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab Content 2: Simulated Mobile Feed Preview -->
+          <div id="tab-content-preview" class="tab-content">
+            <div class="linkedin-mockup-view">
+              <!-- Sandbox Alert Notice -->
+              <div id="preview-sandbox-alert" style="display: none; font-size: 0.75rem; color: #ff7300; background: rgba(255, 115, 0, 0.08); border: 1px solid rgba(255, 115, 0, 0.2); padding: 0.6rem 0.85rem; border-radius: 8px; font-family: var(--font-sans); align-items: center; gap: 0.5rem; line-height: 1.45; margin-bottom: 0.75rem;">
+                <span style="font-size: 1.1rem; line-height: 1;">💡</span>
+                <span><strong>Sandbox Mode:</strong> Original post formatted locally. Enter a Gemini API Key in the config header for advanced AI refactoring.</span>
+              </div>
+              <div class="linkedin-card">
+                <!-- Profile Header info -->
+                <div class="linkedin-header">
+                  <div class="linkedin-avatar" id="preview-avatar">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                  </div>
+                  <div class="linkedin-user-info">
+                    <div class="linkedin-name-row">
+                      <span id="preview-name" class="linkedin-name">Professional Writer</span>
+                      <!-- Verified Badge -->
+                      <span id="preview-verified-badge" class="linkedin-verified-badge" title="Verified Creator">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"></path></svg>
+                      </span>
+                      <span class="linkedin-conn-deg">• 1st</span>
+                    </div>
+                    <div class="linkedin-headline" id="preview-headline">Product Builder & Designer</div>
+                    <div class="linkedin-meta">
+                      <span>1h • Edited •</span>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"></path></svg>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Main Post Content -->
+                <div class="linkedin-post-body collapsed" id="preview-post-body">Your shielded and formatted post will render here...</div>
+                <button id="preview-see-more" class="linkedin-see-more hidden">...see more</button>
+
+                <!-- Social Engagement Counter Bar -->
+                <div class="linkedin-social-bar">
+                  <div class="linkedin-reactions-counter">
+                    <div class="reaction-icons-group">
+                      <div class="icon-circle-like">👍</div>
+                    </div>
+                    <span id="preview-likes-text"><span id="preview-likes-count">124</span> reactions</span>
+                  </div>
+                  <div>8 comments</div>
+                </div>
+
+                <!-- LinkedIn Action Buttons -->
+                <div class="linkedin-actions">
+                  <button id="btn-preview-like" class="linkedin-action-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>
+                    Like
+                  </button>
+                  <button class="linkedin-action-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                    Comment
+                  </button>
+                  <button class="linkedin-action-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13"></path></svg>
+                    Share
+                  </button>
+                  <button class="linkedin-action-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                    Send
+                  </button>
+                </div>
+              </div>
+
+              <!-- Output utility buttons -->
+              <div class="output-actions-bar">
+                <button id="btn-copy-post" class="btn btn-primary">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                  Copy Format
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab Content 3: Before & After Diff Visualizer -->
+          <div id="tab-content-diff" class="tab-content">
+            <div class="diff-view-container">
+              <div class="diff-header-banner">
+                <span class="diff-tag diff-tag-add">🟢 Added Value</span>
+                <span class="diff-tag diff-tag-del">🔴 Removed Buzzwords</span>
+                <span class="diff-tag diff-tag-mod">🔵 Structure & Spacing</span>
+              </div>
+              <div class="diff-split-grid">
+                <div class="diff-box">
+                  <div class="diff-box-title">Original Raw Draft</div>
+                  <div id="diff-original-content" class="diff-content-body">Paste a post and click "Shield Post" to analyze changes...</div>
+                </div>
+                <div class="diff-box">
+                  <div class="diff-box-title">De-Cringed Output</div>
+                  <div id="diff-formatted-content" class="diff-content-body">Shielded version highlights will show here...</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab Content 4: Carousel PDF Generator -->
+          <div id="tab-content-carousel" class="tab-content">
+            <div class="carousel-builder-view">
+              <div class="carousel-controls-bar">
+                <div class="form-group" style="margin-bottom: 0;">
+                  <label for="carousel-theme-select" class="form-label">Slide Theme</label>
+                  <select id="carousel-theme-select" class="select-cyber" style="padding: 0.4rem 0.6rem; font-size: 0.8rem;">
+                    <option value="cyber">Cyberpunk Dark (Neon)</option>
+                    <option value="minimal">Minimalist Light</option>
+                    <option value="blue">Electric Blue</option>
+                    <option value="emerald">Emerald Tech</option>
+                    <option value="sunset">Warm Sunset</option>
+                  </select>
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                  <label for="carousel-title-input" class="form-label">Card Brand Title</label>
+                  <input type="text" id="carousel-title-input" class="drawer-input-cyber" style="padding: 0.4rem 0.6rem; font-size: 0.8rem; width: 110px;" value="CringeShield" placeholder="Brand title..." />
+                </div>
+                <div class="form-group" style="margin-bottom: 0; flex: 1;">
+                  <label for="carousel-watermark-input" class="form-label">Watermark / Handle</label>
+                  <input type="text" id="carousel-watermark-input" class="drawer-input-cyber" style="padding: 0.4rem 0.6rem; font-size: 0.8rem;" value="@saurabhshidhore" />
+                </div>
+                <button id="btn-export-pdf" class="btn btn-primary" style="align-self: flex-end; padding: 0.5rem 0.85rem; font-size: 0.8rem;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                  Export PDF
+                </button>
+              </div>
+
+              <!-- Interactive Slide Viewer Stage -->
+              <div class="slide-stage-container">
+                <div class="slide-nav-bar">
+                  <button id="btn-prev-slide" class="btn-slide-nav">◄ Prev</button>
+                  <span id="carousel-slide-indicator" class="slide-indicator-text">Slide 1 of 1</span>
+                  <button id="btn-next-slide" class="btn-slide-nav">Next ►</button>
+                </div>
+
+                <div id="carousel-card-viewport" class="carousel-card theme-cyber">
+                  <div class="carousel-card-header">
+                    <div class="carousel-card-brand" id="carousel-display-brand">CringeShield</div>
+                    <div class="carousel-card-counter" id="carousel-display-counter">1/4</div>
+                  </div>
+                  <div class="carousel-card-body" id="carousel-display-text">
+                    Your slide content will render here...
+                  </div>
+                  <div class="carousel-card-footer">
+                    <span id="carousel-display-watermark">@saurabhshidhore</span>
+                    <span class="carousel-swipe-prompt">Swipe ➔</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <!-- Hook & CTA Vault Modal -->
+      <div id="hooks-modal-overlay" class="modal-overlay"></div>
+      <div id="hooks-modal" class="modal-card">
+        <div class="modal-header">
+          <div class="modal-title">⚡ Viral Hook & CTA Vault</div>
+          <button id="btn-close-hooks" class="modal-close">×</button>
+        </div>
+        <div class="modal-body">
+          <div class="vault-tabs">
+            <button class="vault-tab-btn active" data-vcat="curiosity">🔥 Curiosity</button>
+            <button class="vault-tab-btn" data-vcat="data">📊 Data Insights</button>
+            <button class="vault-tab-btn" data-vcat="contrarian">⚡ Contrarian</button>
+            <button class="vault-tab-btn" data-vcat="story">🚀 Story Starters</button>
+            <button class="vault-tab-btn" data-vcat="cta">🎯 High-Converting CTAs</button>
+          </div>
+          <div class="vault-search-row">
+            <input type="text" id="vault-search-input" class="drawer-input-cyber" placeholder="Search templates (e.g. product, roadmap, metrics...)" />
+          </div>
+          <div id="vault-items-container" class="vault-items-list">
+            <!-- Dynamic Vault Items -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Drafts Manager Drawer -->
+      <div id="drafts-drawer-overlay" class="modal-overlay"></div>
+      <div id="drafts-drawer" class="settings-drawer">
+        <div class="settings-drawer-header">
+          <div class="settings-drawer-title">📁 Workspace Drafts</div>
+          <button id="btn-close-drafts" class="settings-drawer-close">×</button>
+        </div>
+        <div style="display: flex; gap: 0.5rem;">
+          <button id="btn-new-draft" class="btn" style="flex: 1; font-size: 0.75rem; padding: 0.4rem;">➕ New</button>
+          <button id="btn-save-draft" class="btn btn-primary" style="flex: 1; font-size: 0.75rem; padding: 0.4rem;">💾 Save Current</button>
+          <button id="btn-export-drafts" class="btn" style="font-size: 0.75rem; padding: 0.4rem;">📤 Export</button>
+        </div>
+        <div id="drafts-list-container" style="display: flex; flex-direction: column; gap: 0.65rem; overflow-y: auto; flex: 1; margin-top: 0.5rem;">
+          <!-- Dynamic Draft Items -->
+        </div>
+      </div>
+
+      <!-- Slide out configuration drawer -->
+      <div id="settings-overlay" class="settings-overlay"></div>
+      <div id="settings-drawer" class="settings-drawer">
+        <div class="settings-drawer-header">
+          <div class="settings-drawer-title">Config Drawer</div>
+          <button id="btn-close-settings" class="settings-drawer-close" aria-label="Close Settings">×</button>
+        </div>
+
+        <!-- API Config -->
+        <div class="form-group">
+          <label for="input-api-key" class="form-label">Gemini API Key</label>
+          <input type="password" id="input-api-key" class="drawer-input-cyber" placeholder="Enter your gemini-2.5-flash API Key..." />
+          <div style="font-size: 0.725rem; color: var(--color-text-secondary); line-height: 1.45;">
+            Your key is saved locally in your browser's <code>localStorage</code>. It is sent directly to the official Google Gemini API endpoint.
+          </div>
+        </div>
+
+        <!-- Profile Mock details config -->
+        <div class="form-group">
+          <label for="input-profile-name" class="form-label">Preview Profile Name</label>
+          <input type="text" id="input-profile-name" class="drawer-input-cyber" value="Saurabh Shidhore" />
+        </div>
+
+        <div class="form-group">
+          <label for="input-profile-headline" class="form-label">Preview Headline</label>
+          <input type="text" id="input-profile-headline" class="drawer-input-cyber" value="Product Leader & Builder | Building AI Tools" />
+        </div>
+
+        <div class="form-group">
+          <label for="input-profile-avatar" class="form-label">Preview Avatar URL</label>
+          <input type="text" id="input-profile-avatar" class="drawer-input-cyber" placeholder="https://example.com/avatar.jpg" value="" />
+        </div>
+
+        <!-- Custom Options -->
+        <div class="form-group">
+          <label class="form-label">Profile Badges</label>
+          <div class="drawer-toggle-row">
+            <span>Verified Checkmark Badge</span>
+            <label class="switch">
+              <input type="checkbox" id="input-profile-verified" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <button id="btn-save-settings" class="btn btn-primary" style="margin-top: 1rem; justify-content: center;">
+          Save Config
+        </button>
+      </div>
+
+      <!-- Footer -->
+      <footer style="margin-top: 2rem; border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 1rem; font-size: 0.75rem; color: var(--color-text-secondary); text-align: center; display: flex; justify-content: space-between; align-items: center;">
+        <div>Shielding your LinkedIn post from typical corporate AI hallucinations.</div>
+        <div>Created by <a href="https://github.com/AItools-guru" target="_blank" style="color: var(--color-accent); text-decoration: none;">AItools-guru</a></div>
+      </footer>
+    </div>
+    
+  </body>
+</html>
